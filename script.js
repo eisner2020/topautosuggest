@@ -103,6 +103,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 submitButton.textContent = 'Sending...';
                 submitButton.disabled = true;
 
+                console.log('Sending form data:', formData);
+
                 // Send form data
                 const response = await fetch('/api/contact', {
                     method: 'POST',
@@ -112,18 +114,20 @@ window.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(formData)
                 });
 
+                console.log('Response received:', response.status);
                 const result = await response.json();
+                console.log('Response data:', result);
 
                 // Show success message
                 if (result.success) {
-                    alert('Thank you! Your message has been sent.');
+                    alert('Thank you! Your message has been sent. We will contact you soon.');
                     contactForm.reset();
                 } else {
-                    alert('Failed to send message. Please try again.');
+                    alert('Failed to send message: ' + (result.message || 'Please try again.'));
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to send message. Please try again.');
+                console.error('Error submitting form:', error);
+                alert('Failed to send message. Please try again or contact us directly at eisner2020@mac.com');
             } finally {
                 // Reset button state
                 const submitButton = contactForm.querySelector('button[type="submit"]');
