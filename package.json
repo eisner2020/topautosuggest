@@ -22,6 +22,7 @@
     "google-ads-api": "^17.1.0-rest-beta",
     "google-auth-library": "^9.4.1",
     "googleapis": "^129.0.0",
+    "nodemailer": "^6.9.16",
     "puppeteer": "^23.11.1"
   }
 }

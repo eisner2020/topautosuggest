@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const axios = require('axios');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -270,6 +271,50 @@ function getSmartEstimation(keyword = '', city = '') {
         cpc: estimatedCPC
     };
 }
+
+// Email configuration
+const transporter = nodemailer.createTransport({
+    service: 'iCloud',
+    auth: {
+        user: process.env.EMAIL_USER || 'eisner2020@mac.com',
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
+// Contact form endpoint
+app.post('/api/contact', async (req, res) => {
+    try {
+        const { name, email, phone, message } = req.body;
+        
+        // Email content
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'eisner2020@mac.com',
+            to: process.env.CONTACT_EMAIL || 'eisner2020@mac.com',
+            subject: 'New Contact Form Submission - TopAutosuggest',
+            text: `
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Message: ${message}
+            `,
+            html: `
+<h2>New Contact Form Submission</h2>
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Phone:</strong> ${phone}</p>
+<p><strong>Message:</strong> ${message}</p>
+            `
+        };
+
+        // Send email
+        await transporter.sendMail(mailOptions);
+        
+        res.json({ success: true, message: 'Message sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ success: false, message: 'Failed to send message' });
+    }
+});
 
 // API endpoint for keyword data
 app.post('/api/search-volume', async (req, res) => {
