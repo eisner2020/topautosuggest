@@ -100,15 +100,40 @@ class SearchDemo {
             suggestions = [target, ...suggestions.slice(0, 2)];
         }
 
-        this.suggestionsBox.innerHTML = '';
-        this.suggestionsBox.style.display = 'block';
+        this.showSuggestionsList(suggestions, target);
+    }
 
-        suggestions.forEach(suggestion => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item' + (suggestion === target && showTarget ? ' highlighted' : ' faded');
-            div.textContent = suggestion;
-            this.suggestionsBox.appendChild(div);
-        });
+    showSuggestionsList(suggestions, target) {
+        const suggestionsBox = document.getElementById('suggestions');
+        
+        if (suggestions.length > 0) {
+            // Get the preferred result and remaining suggestions
+            const preferredResult = suggestions[0];
+            const remainingSuggestions = suggestions.slice(1);
+            
+            // Shuffle remaining suggestions
+            for (let i = remainingSuggestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [remainingSuggestions[i], remainingSuggestions[j]] = 
+                [remainingSuggestions[j], remainingSuggestions[i]];
+            }
+            
+            // Insert preferred result at position 2 or 3
+            const insertPosition = 1 + Math.floor(Math.random() * 2); // Will be 1 or 2
+            const finalSuggestions = [...remainingSuggestions];
+            finalSuggestions.splice(insertPosition, 0, preferredResult);
+            
+            // Show suggestions box first
+            suggestionsBox.classList.add('visible');
+            
+            // Create and display all items
+            suggestionsBox.innerHTML = finalSuggestions.map(text => `
+                <div class="suggestion-item${text === target ? ' highlighted' : ''}">${text}</div>
+            `).join('');
+            
+        } else {
+            suggestionsBox.classList.remove('visible');
+        }
     }
 
     wait(ms) {
