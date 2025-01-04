@@ -41,13 +41,23 @@ body {
 }
 
 /* Navigation */
+.top-bar {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
 nav {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 0.5rem 2rem;
 }
 
 .nav-links {
@@ -141,29 +151,9 @@ nav {
     font-weight: bold;
 }
 
-@media screen and (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        gap: 15px;
-        padding: 1rem;
-    }
-
-    .search-demo-container {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .search-wrapper {
-        width: 100%;
-    }
-}
-
 /* Hero Section */
 header {
-    position: relative;
-    padding: 1rem 0;
-    color: white;
-    z-index: 2;
+    padding-top: 60px;  /* Add space for fixed nav */
 }
 
 .hero {
@@ -306,12 +296,26 @@ header {
 }
 
 @media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+        padding: 1rem;
+    }
+
+    .search-demo-container {
+        width: 100%;
+        flex-direction: column;
+    }
+
     .search-wrapper {
-        width: 92%;
+        width: 100%;
+    }
+
+    header {
+        padding-top: 120px;  /* More space for stacked nav */
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
     .hero-content {
         flex-direction: column;
