@@ -43,7 +43,7 @@ body {
 /* Navigation */
 nav {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
     background: white;
@@ -62,16 +62,100 @@ nav {
     font-weight: 500;
 }
 
-.cta-button {
-    background: var(--primary-color);
-    color: white !important;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+.search-demo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.cta-button:hover {
-    background: var(--secondary-color);
+.google-logo {
+    font-size: 24px;
+    letter-spacing: -2px;
+    display: flex;
+    align-items: center;
+}
+
+.search-wrapper {
+    width: 300px;
+    position: relative;
+}
+
+#search-input {
+    width: 100%;
+    height: 34px;
+    padding: 0 16px;
+    font-size: 14px;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px;
+    outline: none;
+    transition: box-shadow 0.2s, border-radius 0.2s;
+    box-sizing: border-box;
+    line-height: 1.4;
+    background: #fff;
+}
+
+#search-input:hover {
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    border-color: rgba(223,225,229,0);
+}
+
+#search-input:focus {
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    border-color: rgba(223,225,229,0);
+    border-radius: 24px 24px 0 0;
+}
+
+.suggestions-box {
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: -1px;
+    background: #fff;
+    border: 1px solid #dfe1e5;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 6px rgba(32,33,36,.28);
+    overflow: hidden;
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions-box.visible {
+    display: block;
+}
+
+.suggestion-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #212121;
+    line-height: 1.58;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.suggestion-item.highlighted {
+    background-color: #eef3fd;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+        padding: 1rem;
+    }
+
+    .search-demo-container {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .search-wrapper {
+        width: 100%;
+    }
 }
 
 /* Hero Section */
@@ -1371,7 +1455,7 @@ section + section {
 
 #search-input:focus {
     border-color: #4285f4;
-    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+    box-shadow: 0 1px 6px rgba(32,33,36,.28);
 }
 
 .suggestions-box {
@@ -1383,7 +1467,7 @@ section + section {
     background: #fff;
     border: 2px solid #dfe1e5;
     border-radius: 16px;
-    box-shadow: 0 4px 6px rgba(32,33,36,0.28);
+    box-shadow: 0 4px 6px rgba(32,33,36,.28);
     overflow: hidden;
     z-index: 1000;
     box-sizing: border-box;
