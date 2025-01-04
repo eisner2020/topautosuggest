@@ -197,31 +197,34 @@ header {
     box-shadow: 0 4px 6px rgba(32,33,36,.28);
     overflow: hidden;
     z-index: 1000;
+    display: none;
+}
+
+.suggestions-box.visible {
+    display: block;
 }
 
 .suggestion-item {
-    width: 100%;
-    padding: 8px 16px;
+    padding: 12px 16px;
+    cursor: pointer;
     font-size: 16px;
     color: #212121;
-    background: #fff;
-    cursor: pointer;
-    white-space: normal;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
     line-height: 1.58;
 }
 
 .suggestion-item:hover {
-    background: #f8f9fa;
+    background-color: #f8f9fa;
 }
 
 .suggestion-item.highlighted {
-    background: #eee;
+    background-color: #eef3fd;
+    font-weight: bold;
 }
 
-.suggestion-item.faded {
-    color: #70757a;
+@media screen and (max-width: 768px) {
+    .search-wrapper {
+        width: 92%;
+    }
 }
 
 /* Responsive adjustments */
@@ -1526,7 +1529,6 @@ section + section {
     padding: 12px 16px;
     font-size: 16px;
     color: #212121;
-    background: #fff;
     cursor: pointer;
 }
 

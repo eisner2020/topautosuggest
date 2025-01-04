@@ -160,64 +160,38 @@
         <section id="example">
             <div class="see-it-in-action">
                 <h2>See It In Action</h2>
-                <div class="demo-layout">
-                    <div class="example-container">
-                        <div class="search-demo">
-                            <form id="search-form" class="search-form">
-                                <div class="input-controls">
-                                    <div class="input-group">
-                                        <label for="niche-input">Target Keywords</label>
-                                        <input type="text" id="niche-input" name="niche" placeholder="e.g., homes for sale">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="city-input">City</label>
-                                        <input type="text" id="city-input" name="city" placeholder="e.g., Dallas">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="company-name">Company Name</label>
-                                        <input type="text" id="company-name" name="company-name" placeholder="e.g., Williamson Realty">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="business-type">Business Type</label>
-                                        <input type="text" id="business-type" name="business-type" placeholder="e.g., Real Estate">
-                                    </div>
-                                    <button type="submit" class="update-button">Get Search Data</button>
-                                </div>
-                            </form>
-
-                            <div class="search-box-container">
-                                <div class="google-style">
-                                    <span class="g" style="color: var(--google-blue)">G</span><span class="o1" style="color: var(--google-red)">o</span><span class="o2" style="color: var(--google-yellow)">o</span><span class="g2" style="color: var(--google-blue)">g</span><span class="l" style="color: var(--google-green)">l</span><span class="e" style="color: var(--google-red)">e</span>
-                                </div>
-                                <div class="search-box">
-                                    <input type="text" id="demo-search" readonly>
-                                    <div class="search-suggestion">
-                                        <span id="demo-suggestion"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="error-message-2" style="display: none;"></div>
-
-                            <div class="metrics-container">
-                                <div class="result-item">
-                                    <div class="result-header">
-                                        <h3>Monthly Search Estimate</h3>
-                                        <div id="monthly-searches" class="value">-</div>
-                                    </div>
-                                </div>
-                                <div class="result-item">
-                                    <div class="result-header">
-                                        <h3>Cost Per Click</h3>
-                                        <div id="ppc-cost-2" class="value">-</div>
-                                    </div>
-                                </div>
-                                <div class="disclaimer">
-                                    <p>For a more accurate analysis tailored to your business and to explore how this can benefit your growth, <a href="#contact" class="cta-link">schedule a call with us today!</a></p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="search-demo-container">
+                    <div class="google-logo">
+                        <span style="color: #4285f4">G</span>
+                        <span style="color: #ea4335">o</span>
+                        <span style="color: #fbbc05">o</span>
+                        <span style="color: #4285f4">g</span>
+                        <span style="color: #34a853">l</span>
+                        <span style="color: #ea4335">e</span>
                     </div>
+                    <div class="search-wrapper">
+                        <input type="text" id="search-input" autocomplete="off" placeholder="Search...">
+                        <div id="suggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+                <div class="keyword-form">
+                    <div class="form-group">
+                        <label for="target-keywords">Target Keywords</label>
+                        <input type="text" id="target-keywords" placeholder="e.g., homes for sale">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" placeholder="e.g., Dallas">
+                    </div>
+                    <div class="form-group">
+                        <label for="company-name">Company Name</label>
+                        <input type="text" id="company-name" placeholder="e.g., Williamson Realty">
+                    </div>
+                    <div class="form-group">
+                        <label for="business-type">Business Type</label>
+                        <input type="text" id="business-type" placeholder="e.g., Real Estate">
+                    </div>
+                    <button id="get-data" class="cta-button">Get Search Data</button>
                 </div>
             </div>
         </section>
