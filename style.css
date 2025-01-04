@@ -634,9 +634,10 @@ header {
 /* Search Container */
 .search-container {
     width: 100%;
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+    max-width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .search-inputs {
@@ -1327,8 +1328,8 @@ section + section {
 /* Search Demo Styles */
 .search-container {
     width: 100%;
-    max-width: 900px;
-    padding: 20px;
+    max-width: 100%;
+    padding: 0 1rem;
     margin: 0 auto;
 }
 
@@ -1339,31 +1340,33 @@ section + section {
 
 #search-input {
     width: 100%;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: 1px solid #dfe1e5;
-    border-radius: 24px;
+    height: 56px;
+    padding: 0 24px;
+    font-size: 20px;
+    border: 2px solid #dfe1e5;
+    border-radius: 28px;
     outline: none;
-    transition: box-shadow 0.3s;
-    box-sizing: border-box;
-    line-height: 1.4;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #fff;
 }
 
-#search-input:hover,
 #search-input:focus {
-    box-shadow: 0 1px 6px rgba(32,33,36,.28);
-    border-color: rgba(223,225,229,0);
+    border-color: #4285f4;
+    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
 }
 
 .suggestions-box {
-    margin-top: 1px;
-    border: 1px solid #dfe1e5;
-    border-radius: 0 0 24px 24px;
-    box-shadow: 0 4px 6px rgba(32,33,36,.28);
-    background-color: white;
-    display: none;
-    position: absolute;
     width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: #fff;
+    border: 2px solid #dfe1e5;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(32,33,36,0.28);
+    overflow: hidden;
     z-index: 1000;
     box-sizing: border-box;
     max-height: 300px;
@@ -1371,15 +1374,24 @@ section + section {
 }
 
 .suggestion-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 20px;
+    line-height: 1.4;
+    color: #212121;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
 }
 
 .suggestion-item.highlighted {
-    font-weight: bold;
-    background-color: #e8f0fe;
-    color: #1a73e8;
+    background: #4285f4;
+    color: #fff;
 }
 
 .suggestion-item.faded {
@@ -1405,7 +1417,6 @@ section + section {
 
 .search-wrapper {
     width: 100%;
-    max-width: 600px;
     position: relative;
 }
 
