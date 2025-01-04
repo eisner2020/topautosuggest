@@ -1569,3 +1569,24 @@ section + section {
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 }
+
+/* Remove duplicate search styles */
+.search-box,
+.google-search,
+.search-container {
+    display: none;
+}
+
+/* Hero Image */
+.hero-image {
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-image img {
+    max-width: 100%;
+    height: auto;
+}
