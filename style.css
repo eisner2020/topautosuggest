@@ -201,12 +201,14 @@ header {
 
 .suggestion-item {
     width: 100%;
-    padding: 12px 16px;
+    padding: 6px 16px;
     font-size: 16px;
-    line-height: 22px;
     color: #212121;
     background: #fff;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .suggestion-item:hover {
@@ -256,77 +258,74 @@ header {
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
     body {
-        background: #fff;
+        background: #f1f3f4;
     }
 
     .search-demo-container {
-        width: 100%;
-        max-width: none;
-        margin: 0;
-        padding: 20px 0;
-    }
-
-    .google-logo {
-        font-size: 28px;
-        margin-bottom: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
     }
 
     .search-wrapper {
-        width: 92%;
-        max-width: none;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     #search-input {
-        height: 52px;
-        font-size: 18px;
-        padding: 0 20px;
-        border: 2px solid #dfe1e5;
+        width: 100%;
+        height: 40px;
+        padding: 8px 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
     }
 
     .suggestions-box {
-        width: 100%;
-        margin-top: 8px;
-        border: 2px solid #dfe1e5;
-        border-radius: 12px;
+        position: relative;
+        margin-top: 10px;
+        border: none;
+        border-radius: 4px;
+        box-shadow: none;
     }
 
     .suggestion-item {
-        padding: 16px 20px;
-        font-size: 18px;
-        line-height: 1.4;
+        padding: 12px 15px;
+        font-size: 15px;
         border-bottom: 1px solid #eee;
+        white-space: normal;
+        line-height: 1.4;
     }
 
     .suggestion-item:last-child {
         border-bottom: none;
     }
+
+    .suggestion-item.highlighted {
+        background: #f8f9fa;
+    }
 }
 
 /* Small phones */
 @media screen and (max-width: 480px) {
+    .search-demo-container {
+        padding: 15px;
+    }
+
     .search-wrapper {
-        width: 94%;
+        padding: 12px;
     }
 
     #search-input {
-        height: 48px;
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .suggestion-item {
-        padding: 14px 18px;
-        font-size: 16px;
-    }
-}
-
-/* iOS Specific Fixes */
-@supports (-webkit-touch-callout: none) {
-    #search-input {
-        font-size: 16px;
-    }
-
-    .suggestion-item {
-        font-size: 16px;
+        padding: 10px 12px;
+        font-size: 14px;
     }
 }
 
