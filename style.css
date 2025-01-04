@@ -9,9 +9,9 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: #fff;
-    min-height: 100vh;
+    background: #f8f9fa;
     width: 100%;
+    min-height: 100vh;
 }
 
 :root {
@@ -140,27 +140,86 @@ header {
 }
 
 .search-demo-container {
-    flex: 0 0 400px;
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 40px;
     background: white;
-    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.search-container {
+.google-logo {
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 30px;
+    letter-spacing: -1px;
+}
+
+.search-wrapper {
     width: 100%;
+    max-width: 600px;
+    position: relative;
 }
 
-/* Ensure suggestions appear above other content */
-.google-search {
-    position: relative;
-    z-index: 1000;
+#search-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 20px;
+    font-size: 16px;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #fff;
+}
+
+#search-input:focus {
+    border-color: #4285f4;
+    box-shadow: 0 1px 6px rgba(32,33,36,0.28);
 }
 
 .suggestions-box {
-    position: absolute;
     width: 100%;
-    z-index: 1001;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid #dfe1e5;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(32,33,36,0.28);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.suggestion-item {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #212121;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item.highlighted {
+    background: #4285f4;
+    color: #fff;
+}
+
+.suggestion-item.faded {
+    color: #70757a;
 }
 
 /* Responsive adjustments */
@@ -198,91 +257,45 @@ header {
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
     body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        min-height: 100vh;
         background: #fff;
     }
 
     .search-demo-container {
         width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        max-width: none;
+        margin: 0;
+        padding: 20px 0;
+        box-shadow: none;
+        border-radius: 0;
     }
 
     .google-logo {
-        font-size: 32px;
+        font-size: 28px;
         margin-bottom: 20px;
-        letter-spacing: -1px;
     }
 
-    .search-box {
-        width: 100%;
+    .search-wrapper {
+        width: 92%;
         max-width: none;
-        position: relative;
-        margin: 0;
-        padding: 0 10px;
-        box-sizing: border-box;
     }
 
-    .search-box input {
-        width: 100%;
-        height: 56px;
-        font-size: 20px;
-        padding: 12px 20px;
-        border-radius: 28px;
+    #search-input {
+        height: 52px;
+        font-size: 18px;
+        padding: 0 20px;
         border: 2px solid #dfe1e5;
-        box-shadow: none;
-        -webkit-appearance: none;
-        box-sizing: border-box;
-        margin: 0;
     }
 
     .suggestions-box {
-        position: absolute;
-        top: 100%;
-        left: 0;
         width: 100%;
-        background: #fff;
         border: 2px solid #dfe1e5;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(32,33,36,0.28);
-        margin-top: 8px;
-        z-index: 1000;
-        box-sizing: border-box;
-        padding: 0;
     }
 
     .suggestion-item {
-        padding: 20px;
-        font-size: 20px;
+        padding: 16px 20px;
+        font-size: 18px;
         line-height: 1.4;
-        color: #212121;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        white-space: normal;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        min-height: 30px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .suggestion-item:last-child {
-        border-bottom: none;
-    }
-
-    .suggestion-item.highlighted {
-        background-color: #4285f4;
-        color: white;
-        font-weight: 500;
-    }
-
-    .suggestion-item.faded {
-        color: #70757a;
     }
 }
 
@@ -292,26 +305,29 @@ header {
         padding: 15px 0;
     }
 
-    .google-logo {
-        font-size: 28px;
-        margin-bottom: 15px;
+    .search-wrapper {
+        width: 94%;
     }
 
-    .search-box {
-        width: 100%;
-        padding: 0 8px;
-    }
-
-    .search-box input {
-        height: 52px;
-        font-size: 18px;
-        padding: 12px 20px;
+    #search-input {
+        height: 48px;
+        font-size: 16px;
     }
 
     .suggestion-item {
-        padding: 18px;
-        font-size: 18px;
-        line-height: 1.4;
+        padding: 14px 18px;
+        font-size: 16px;
+    }
+}
+
+/* iOS Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    #search-input {
+        font-size: 16px;
+    }
+
+    .suggestion-item {
+        font-size: 16px;
     }
 }
 
