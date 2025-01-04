@@ -12,6 +12,7 @@ body {
     background: #f8f9fa;
     width: 100%;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 :root {
@@ -41,23 +42,18 @@ body {
 }
 
 /* Navigation */
-.top-bar {
+header {
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    position: relative;
 }
 
 nav {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 2rem;
+    justify-content: flex-end;
 }
 
 .nav-links {
@@ -72,10 +68,16 @@ nav {
     font-weight: 500;
 }
 
+/* Search Demo */
 .search-demo-container {
+    position: absolute;
+    top: 0;
+    right: calc(50% - 600px + 2rem); /* Align with nav max-width */
+    padding: 0.5rem 0;
     display: flex;
     align-items: center;
     gap: 15px;
+    z-index: 10;
 }
 
 .google-logo {
@@ -152,10 +154,6 @@ nav {
 }
 
 /* Hero Section */
-header {
-    padding-top: 60px;  /* Add space for fixed nav */
-}
-
 .hero {
     background: #f8f9fa;
     padding: 40px 0;
@@ -165,11 +163,11 @@ header {
 .hero-content {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 40px;
-    padding: 0 20px;
 }
 
 .hero-text {
@@ -293,6 +291,36 @@ header {
 .suggestion-item.highlighted {
     background-color: #eef3fd;
     font-weight: bold;
+}
+
+@media screen and (max-width: 1200px) {
+    .search-demo-container {
+        right: 2rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    nav {
+        justify-content: center;
+    }
+
+    .search-demo-container {
+        position: static;
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem auto;
+        padding: 0 2rem;
+        flex-direction: column;
+    }
+
+    .search-wrapper {
+        width: 100%;
+    }
+
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+    }
 }
 
 @media screen and (max-width: 768px) {
