@@ -230,30 +230,37 @@ function updateMetricsDisplay(data) {
 
 function showSuggestions(suggestions) {
     const suggestionsBox = document.getElementById('suggestions');
-    suggestionsBox.innerHTML = '';
     
     if (suggestions.length > 0) {
-        suggestions.forEach((text, index) => {
+        // Keep the suggestions box visible
+        suggestionsBox.classList.add('visible');
+        
+        // Create all suggestion items
+        const suggestionElements = suggestions.map(text => {
             const div = document.createElement('div');
             div.textContent = text;
             div.className = 'suggestion-item';
-            suggestionsBox.appendChild(div);
+            return div;
         });
 
-        // Add highlight after a short delay
-        setTimeout(() => {
-            const items = suggestionsBox.getElementsByClassName('suggestion-item');
-            if (items.length > 0) {
-                // Remove any existing highlights
-                Array.from(items).forEach(item => item.classList.remove('highlighted'));
-                
-                // Randomly select an item to highlight
-                const randomIndex = Math.floor(Math.random() * items.length);
-                items[randomIndex].classList.add('highlighted');
-            }
-        }, 500); // 500ms delay
+        // Clear and append all items
+        suggestionsBox.innerHTML = '';
+        suggestionElements.forEach(div => suggestionsBox.appendChild(div));
 
-        suggestionsBox.classList.add('visible');
+        // After a delay, randomly highlight one suggestion
+        setTimeout(() => {
+            // Get a random suggestion to highlight
+            const randomIndex = Math.floor(Math.random() * suggestions.length);
+            
+            // Create new elements with the highlighted one in its original position
+            suggestionsBox.innerHTML = '';
+            suggestionElements.forEach((div, index) => {
+                if (index === randomIndex) {
+                    div.classList.add('highlighted');
+                }
+                suggestionsBox.appendChild(div);
+            });
+        }, 1000); // 1 second delay to make the transition more noticeable
     } else {
         suggestionsBox.classList.remove('visible');
     }
