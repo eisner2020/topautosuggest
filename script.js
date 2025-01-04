@@ -253,13 +253,22 @@ function showSuggestions(suggestions) {
             const randomIndex = Math.floor(Math.random() * suggestions.length);
             const highlightedText = suggestions[randomIndex];
             
-            // Create a new array with the highlighted item in a random position
-            let newSuggestions = suggestions.filter((_, i) => i !== randomIndex);
-            const newRandomPosition = Math.floor(Math.random() * (suggestions.length));
-            newSuggestions.splice(newRandomPosition, 0, highlightedText);
+            // Remove the highlighted item and shuffle remaining items
+            let remainingSuggestions = suggestions.filter((_, i) => i !== randomIndex);
             
-            // Create new elements with the highlighted one in its new position
-            const newElements = newSuggestions.map((text, index) => {
+            // Fisher-Yates shuffle for true randomization
+            for (let i = remainingSuggestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [remainingSuggestions[i], remainingSuggestions[j]] = 
+                [remainingSuggestions[j], remainingSuggestions[i]];
+            }
+            
+            // Insert highlighted item at a random position
+            const insertPosition = Math.floor(Math.random() * (suggestions.length));
+            remainingSuggestions.splice(insertPosition, 0, highlightedText);
+            
+            // Create new elements with the highlighted one in its random position
+            const newElements = remainingSuggestions.map(text => {
                 const div = document.createElement('div');
                 div.textContent = text;
                 div.className = 'suggestion-item';
@@ -271,8 +280,9 @@ function showSuggestions(suggestions) {
 
             // Replace content without removing the box
             requestAnimationFrame(() => {
-                suggestionsBox.innerHTML = '';
-                newElements.forEach(div => suggestionsBox.appendChild(div));
+                const tempContainer = document.createElement('div');
+                newElements.forEach(div => tempContainer.appendChild(div));
+                suggestionsBox.innerHTML = tempContainer.innerHTML;
             });
         }, 1000);
     } else {

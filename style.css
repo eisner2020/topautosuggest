@@ -130,6 +130,8 @@ nav {
     overflow: hidden;
     z-index: 1000;
     display: none;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .suggestions-box.visible {
