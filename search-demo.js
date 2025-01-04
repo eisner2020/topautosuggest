@@ -103,46 +103,78 @@ class SearchDemo {
                 suggestions.push(previousWords + " near me");
             }
         } else {
-            // Regular suggestions based on current word only
+            // Regular suggestions based on current word and position
             if (words.length === 1) {
                 // First word suggestions
                 if (currentWord.length >= 3) {
-                    suggestions = [
-                        currentWord + " services",
-                        currentWord + " near me",
-                        currentWord + " help"
-                    ];
+                    if (currentWord.toLowerCase().includes('sweep')) {
+                        suggestions = [
+                            currentWord + "s",
+                            currentWord + " in",
+                            currentWord + " near"
+                        ];
+                    } else if (currentWord.toLowerCase().includes('lawyer')) {
+                        suggestions = [
+                            currentWord + " in",
+                            currentWord + " near",
+                            currentWord + " free"
+                        ];
+                    } else {
+                        suggestions = [
+                            currentWord + "s",
+                            currentWord + " in",
+                            currentWord + " near"
+                        ];
+                    }
                 }
-            } else {
-                // For subsequent words, only suggest completions for the current word
+            } else if (words.length === 2) {
+                // Second word suggestions
                 if (currentWord.length >= 2) {
-                    if (currentWord.toLowerCase() === 'p') {
+                    if (currentWord.toLowerCase() === 'in') {
                         suggestions = [
-                            previousWords + " pa",
-                            previousWords + " professional",
-                            previousWords + " pro"
+                            previousWords + " in pa",
+                            previousWords + " in fl",
+                            previousWords + " in tx"
                         ];
-                    } else if (currentWord.toLowerCase() === 'f') {
-                        suggestions = [
-                            previousWords + " fl",
-                            previousWords + " free",
-                            previousWords + " fast"
-                        ];
-                    } else if (currentWord.toLowerCase().startsWith('n')) {
+                    } else if (currentWord.toLowerCase() === 'ne') {
                         suggestions = [
                             previousWords + " near me",
-                            previousWords + " now",
+                            previousWords + " near by",
                             previousWords + " next day"
                         ];
                     } else {
                         suggestions = [
-                            previousWords + " " + currentWord + " services",
-                            previousWords + " " + currentWord + " now",
-                            previousWords + " " + currentWord + " help"
+                            previousWords + " " + currentWord,
+                            previousWords + " in",
+                            previousWords + " near"
+                        ];
+                    }
+                }
+            } else if (words.length === 3) {
+                // Third word suggestions - only locations or specific completions
+                if (currentWord.length >= 1) {
+                    if (currentWord.toLowerCase() === 'p') {
+                        suggestions = [
+                            previousWords + " pa",
+                            previousWords + " philadelphia",
+                            previousWords + " pittsburgh"
+                        ];
+                    } else if (currentWord.toLowerCase() === 'f') {
+                        suggestions = [
+                            previousWords + " fl",
+                            previousWords + " florida",
+                            previousWords + " fort lauderdale"
+                        ];
+                    } else if (currentWord.toLowerCase() === 'm') {
+                        suggestions = [
+                            previousWords + " miami",
+                            previousWords + " melbourne",
+                            previousWords + " me"
                         ];
                     }
                 }
             }
+            // Don't show suggestions for 4th word unless it's the target
         }
 
         // Ensure we have the right number of suggestions
