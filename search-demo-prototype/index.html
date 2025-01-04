@@ -7,20 +7,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main class="search-demo-container">
-        <div class="google-logo">
-            <span style="color: #4285f4">G</span>
-            <span style="color: #ea4335">o</span>
-            <span style="color: #fbbc05">o</span>
-            <span style="color: #4285f4">g</span>
-            <span style="color: #34a853">l</span>
-            <span style="color: #ea4335">e</span>
+    <div class="search-demo-container">
+        <div class="desktop-view">
+            <div class="google-logo">
+                <span style="color: #4285f4">G</span>
+                <span style="color: #ea4335">o</span>
+                <span style="color: #fbbc05">o</span>
+                <span style="color: #4285f4">g</span>
+                <span style="color: #34a853">l</span>
+                <span style="color: #ea4335">e</span>
+            </div>
+            <div class="search-wrapper">
+                <input type="text" id="search-input" autocomplete="off" placeholder="Search...">
+                <div id="suggestions" class="suggestions-box"></div>
+            </div>
         </div>
-        <div class="search-wrapper">
-            <input type="text" id="search-input" autocomplete="off" placeholder="Search...">
-            <div id="suggestions" class="suggestions-box"></div>
+        <div class="mobile-view">
+            <video id="demo-video" playsinline autoplay muted loop>
+                <source src="search-demo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
-    </main>
+    </div>
     <script src="demo-config.js"></script>
     <script src="script.js"></script>
 </body>
