@@ -217,7 +217,8 @@ header {
 }
 
 .suggestion-item.highlighted {
-    background: #eee;
+    background-color: #4285f4;
+    color: white;
 }
 
 .suggestion-item.faded {
@@ -1376,7 +1377,7 @@ section + section {
     position: absolute;
     top: 100%;
     left: 0;
-    margin-top: 8px;
+    right: 0;
     background: #fff;
     border: 2px solid #dfe1e5;
     border-radius: 16px;
@@ -1405,8 +1406,8 @@ section + section {
 }
 
 .suggestion-item.highlighted {
-    background: #4285f4;
-    color: #fff;
+    background-color: #4285f4;
+    color: white;
 }
 
 .suggestion-item.faded {
@@ -1535,7 +1536,8 @@ section + section {
 }
 
 .suggestion-item.highlighted {
-    background: #eee;
+    background-color: #4285f4;
+    color: white;
 }
 
 .suggestion-item.faded {

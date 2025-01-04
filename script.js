@@ -5,6 +5,7 @@ let businessTypeInput = null;
 let businessNameInput = null;
 let demoSearch = null;
 let demoSuggestion = null;
+let currentHighlightedIndex = -1;
 
 // Function to safely get element value
 function getElementValue(element, defaultValue = '') {
@@ -136,6 +137,98 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Update suggestions
+    function updateSuggestions(input) {
+        const suggestionsBox = document.getElementById('suggestions');
+        suggestionsBox.innerHTML = '';
+        
+        if (!input.trim()) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        const suggestions = getSuggestions(input);
+        if (suggestions.length === 0) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        currentHighlightedIndex = -1;
+        
+        suggestions.forEach((suggestion, index) => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.textContent = suggestion;
+            
+            div.addEventListener('mouseover', () => {
+                clearHighlights();
+                div.classList.add('highlighted');
+                currentHighlightedIndex = index;
+            });
+            
+            div.addEventListener('mouseout', () => {
+                div.classList.remove('highlighted');
+                currentHighlightedIndex = -1;
+            });
+            
+            div.addEventListener('click', () => {
+                document.getElementById('search-input').value = suggestion;
+                suggestionsBox.style.display = 'none';
+            });
+            
+            suggestionsBox.appendChild(div);
+        });
+        
+        suggestionsBox.style.display = 'block';
+    }
+
+    function clearHighlights() {
+        const suggestions = document.querySelectorAll('.suggestion-item');
+        suggestions.forEach(item => item.classList.remove('highlighted'));
+    }
+
+    function handleKeyNavigation(e) {
+        const suggestionsBox = document.getElementById('suggestions');
+        const suggestions = document.querySelectorAll('.suggestion-item');
+        
+        if (suggestions.length === 0) return;
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            currentHighlightedIndex = (currentHighlightedIndex + 1) % suggestions.length;
+            updateHighlight(suggestions);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            currentHighlightedIndex = currentHighlightedIndex <= 0 ? suggestions.length - 1 : currentHighlightedIndex - 1;
+            updateHighlight(suggestions);
+        } else if (e.key === 'Enter' && currentHighlightedIndex >= 0) {
+            e.preventDefault();
+            const selectedSuggestion = suggestions[currentHighlightedIndex].textContent;
+            document.getElementById('search-input').value = selectedSuggestion;
+            suggestionsBox.style.display = 'none';
+        }
+    }
+
+    function updateHighlight(suggestions) {
+        clearHighlights();
+        if (currentHighlightedIndex >= 0) {
+            suggestions[currentHighlightedIndex].classList.add('highlighted');
+            suggestions[currentHighlightedIndex].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        updateSuggestions(e.target.value);
+    });
+
+    document.getElementById('search-input').addEventListener('keydown', handleKeyNavigation);
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrapper')) {
+            document.getElementById('suggestions').style.display = 'none';
+        }
+    });
 });
 
 // Function to get keyword data
@@ -226,4 +319,9 @@ function updateMetricsDisplay(data) {
     if (errorElement) {
         errorElement.style.display = 'none';
     }
+}
+
+function getSuggestions(input) {
+    // TO DO: implement suggestion logic
+    return [];
 }
