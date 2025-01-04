@@ -91,90 +91,91 @@ class SearchDemo {
         // Only show target suggestion when we're very close to completion
         if (showTarget) {
             suggestions = [target];
-            // Add some variations for the target
-            if (target.includes('pa')) {
-                suggestions.push(previousWords + " pa services");
-                suggestions.push(previousWords + " pa near me");
-            } else if (target.includes('fl')) {
-                suggestions.push(previousWords + " fl services");
-                suggestions.push(previousWords + " fl near me");
+            // Add some variations that match the target's pattern
+            if (target.includes('wells & sons')) {
+                suggestions.push(previousWords + " wells");
+                suggestions.push(previousWords + " wells and");
+            } else if (target.includes('ask gary')) {
+                suggestions.push(previousWords + " ask");
+                suggestions.push(previousWords + " ask for");
             } else {
-                suggestions.push(previousWords + " services");
-                suggestions.push(previousWords + " near me");
+                // Use parts of the target for variations
+                const targetParts = target.split(' ');
+                suggestions.push(targetParts.slice(0, -1).join(' '));
+                suggestions.push(targetParts.slice(0, -2).join(' '));
             }
         } else {
             // Regular suggestions based on current word and position
             if (words.length === 1) {
-                // First word suggestions
+                // First word suggestions - only show word completions
                 if (currentWord.length >= 3) {
                     if (currentWord.toLowerCase().includes('sweep')) {
                         suggestions = [
                             currentWord + "s",
-                            currentWord + " in",
-                            currentWord + " near"
+                            currentWord + "ing",
+                            currentWord + "er"
                         ];
                     } else if (currentWord.toLowerCase().includes('lawyer')) {
                         suggestions = [
-                            currentWord + " in",
-                            currentWord + " near",
-                            currentWord + " free"
+                            currentWord + "s",
+                            currentWord + " at",
+                            currentWord + " of"
                         ];
                     } else {
                         suggestions = [
                             currentWord + "s",
-                            currentWord + " in",
-                            currentWord + " near"
+                            currentWord + "ing",
+                            currentWord + "er"
                         ];
                     }
                 }
             } else if (words.length === 2) {
-                // Second word suggestions
+                // Second word suggestions - only locations or connectors
                 if (currentWord.length >= 2) {
-                    if (currentWord.toLowerCase() === 'in') {
+                    if (previousWords.includes('sweep')) {
                         suggestions = [
-                            previousWords + " in pa",
-                            previousWords + " in fl",
-                            previousWords + " in tx"
+                            previousWords + " " + currentWord,
+                            previousWords + " in",
+                            previousWords + " at"
                         ];
-                    } else if (currentWord.toLowerCase() === 'ne') {
+                    } else if (previousWords.includes('lawyer')) {
                         suggestions = [
-                            previousWords + " near me",
-                            previousWords + " near by",
-                            previousWords + " next day"
+                            previousWords + " " + currentWord,
+                            previousWords + " in",
+                            previousWords + " at"
                         ];
                     } else {
                         suggestions = [
                             previousWords + " " + currentWord,
                             previousWords + " in",
-                            previousWords + " near"
+                            previousWords + " at"
                         ];
                     }
                 }
             } else if (words.length === 3) {
-                // Third word suggestions - only locations or specific completions
+                // Third word suggestions - only specific locations
                 if (currentWord.length >= 1) {
                     if (currentWord.toLowerCase() === 'p') {
                         suggestions = [
                             previousWords + " pa",
-                            previousWords + " philadelphia",
-                            previousWords + " pittsburgh"
+                            previousWords + " pottstown",
+                            previousWords + " philadelphia"
                         ];
                     } else if (currentWord.toLowerCase() === 'f') {
                         suggestions = [
                             previousWords + " fl",
-                            previousWords + " florida",
-                            previousWords + " fort lauderdale"
+                            previousWords + " fort",
+                            previousWords + " florida"
                         ];
                     } else if (currentWord.toLowerCase() === 'm') {
                         suggestions = [
                             previousWords + " miami",
-                            previousWords + " melbourne",
-                            previousWords + " me"
+                            previousWords + " metro",
+                            previousWords + " mobile"
                         ];
                     }
                 }
             }
-            // Don't show suggestions for 4th word unless it's the target
         }
 
         // Ensure we have the right number of suggestions
