@@ -249,36 +249,33 @@ function showSuggestions(suggestions) {
 
         // After a delay, rearrange and highlight
         setTimeout(() => {
-            // Choose a random suggestion to highlight
-            const randomIndex = Math.floor(Math.random() * suggestions.length);
-            const highlightedText = suggestions[randomIndex];
+            // Get the preferred result (first item in original suggestions)
+            const preferredResult = suggestions[0];
+            const remainingSuggestions = suggestions.slice(1);
             
-            // Remove the highlighted item and shuffle remaining items
-            let remainingSuggestions = suggestions.filter((_, i) => i !== randomIndex);
-            
-            // Fisher-Yates shuffle for true randomization
+            // Shuffle remaining suggestions
             for (let i = remainingSuggestions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [remainingSuggestions[i], remainingSuggestions[j]] = 
                 [remainingSuggestions[j], remainingSuggestions[i]];
             }
             
-            // Insert highlighted item at a random position
-            const insertPosition = Math.floor(Math.random() * (suggestions.length));
-            remainingSuggestions.splice(insertPosition, 0, highlightedText);
+            // Insert preferred result at random position (1-3)
+            const insertPosition = Math.floor(Math.random() * Math.min(3, suggestions.length));
+            remainingSuggestions.splice(insertPosition, 0, preferredResult);
             
-            // Create new elements with the highlighted one in its random position
+            // Create new elements with the preferred one highlighted
             const newElements = remainingSuggestions.map(text => {
                 const div = document.createElement('div');
                 div.textContent = text;
                 div.className = 'suggestion-item';
-                if (text === highlightedText) {
+                if (text === preferredResult) {
                     div.classList.add('highlighted');
                 }
                 return div;
             });
 
-            // Replace content without removing the box
+            // Replace content smoothly
             requestAnimationFrame(() => {
                 const tempContainer = document.createElement('div');
                 newElements.forEach(div => tempContainer.appendChild(div));
