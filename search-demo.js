@@ -49,16 +49,18 @@ class SearchDemo {
             const percentComplete = (charsTyped / totalChars) * 100;
             
             // Only show suggestions if:
-            // 1. For first word: at least 3 characters
-            // 2. For subsequent words: only after typing at least 2 chars of current word
-            // 3. OR we're near the end of typing
+            // 1. First word: at least 3 characters
+            // 2. Subsequent words: only after typing at least 2 chars of current word
+            // 3. OR we're at 95% completion
             const shouldShowSuggestions = 
                 (currentWords.length === 1 && lastWord.length >= 3) ||
                 (currentWords.length > 1 && lastWord.length >= 2 && !lastWord.includes(' ')) ||
-                percentComplete >= 90;
+                percentComplete >= 95;
+
+            // Only show target suggestion when we're very close to completion
+            const shouldShowTarget = percentComplete >= 95 && currentWords.length >= words.length;
 
             if (shouldShowSuggestions) {
-                const shouldShowTarget = percentComplete >= 90 && currentWords.length >= words.length;
                 this.showSuggestions(partial, targetSuggestion, {
                     showTarget: shouldShowTarget
                 });
@@ -86,46 +88,74 @@ class SearchDemo {
         const previousWords = words.slice(0, -1).join(' ');
         let suggestions = [];
         
-        // Only generate suggestions based on what's currently typed
-        if (words.length === 1) {
-            // First word suggestions
-            suggestions = [
-                partial + " services",
-                partial + " near",
-                partial + " company",
-                partial + " help"
-            ];
-        } else {
-            // For subsequent words, only suggest completions for the current word
-            const locationTerms = ['pa', 'fl', 'co', 'sc', 'tx'];
-            const isLocation = locationTerms.some(term => currentWord.toLowerCase() === term);
-            
-            if (isLocation) {
-                suggestions = [
-                    previousWords + " " + currentWord + " best",
-                    previousWords + " " + currentWord + " top",
-                    previousWords + " " + currentWord + " near",
-                    previousWords + " " + currentWord + " local"
-                ];
+        // Only show target suggestion when we're very close to completion
+        if (showTarget) {
+            suggestions = [target];
+            // Add some variations for the target
+            if (target.includes('pa')) {
+                suggestions.push(previousWords + " pa services");
+                suggestions.push(previousWords + " pa near me");
+            } else if (target.includes('fl')) {
+                suggestions.push(previousWords + " fl services");
+                suggestions.push(previousWords + " fl near me");
             } else {
-                // Base suggestions on the current word being typed
-                suggestions = [
-                    previousWords + " " + currentWord + "s",
-                    previousWords + " " + currentWord + " area",
-                    previousWords + " " + currentWord + " near",
-                    previousWords + " " + currentWord + " local"
-                ];
+                suggestions.push(previousWords + " services");
+                suggestions.push(previousWords + " near me");
+            }
+        } else {
+            // Regular suggestions based on current word only
+            if (words.length === 1) {
+                // First word suggestions
+                if (currentWord.length >= 3) {
+                    suggestions = [
+                        currentWord + " services",
+                        currentWord + " near me",
+                        currentWord + " help"
+                    ];
+                }
+            } else {
+                // For subsequent words, only suggest completions for the current word
+                if (currentWord.length >= 2) {
+                    if (currentWord.toLowerCase() === 'p') {
+                        suggestions = [
+                            previousWords + " pa",
+                            previousWords + " professional",
+                            previousWords + " pro"
+                        ];
+                    } else if (currentWord.toLowerCase() === 'f') {
+                        suggestions = [
+                            previousWords + " fl",
+                            previousWords + " free",
+                            previousWords + " fast"
+                        ];
+                    } else if (currentWord.toLowerCase().startsWith('n')) {
+                        suggestions = [
+                            previousWords + " near me",
+                            previousWords + " now",
+                            previousWords + " next day"
+                        ];
+                    } else {
+                        suggestions = [
+                            previousWords + " " + currentWord + " services",
+                            previousWords + " " + currentWord + " now",
+                            previousWords + " " + currentWord + " help"
+                        ];
+                    }
+                }
             }
         }
 
+        // Ensure we have the right number of suggestions
         if (showTarget) {
             const targetSuggestions = suggestions.slice(0, 3);
-            targetSuggestions.splice(this.currentTargetPosition, 0, target);
-            suggestions = targetSuggestions;
+            if (!targetSuggestions.includes(target)) {
+                targetSuggestions.splice(this.currentTargetPosition, 0, target);
+                suggestions = targetSuggestions.slice(0, 3);
+            }
         }
 
         this.suggestionsBox.innerHTML = '';
-        this.suggestionsBox.style.display = 'block';
+        this.suggestionsBox.style.display = suggestions.length > 0 ? 'block' : 'none';
 
         suggestions.forEach(suggestion => {
             const div = document.createElement('div');
