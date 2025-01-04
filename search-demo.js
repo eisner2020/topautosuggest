@@ -43,12 +43,22 @@ class SearchDemo {
             const partial = keyword.substring(0, i);
             this.searchInput.value = partial;
             
-            const completeWords = partial.trim().split(' ').length;
+            const currentWords = partial.trim().split(' ');
+            const lastWord = currentWords[currentWords.length - 1];
             const charsTyped = partial.length;
             const percentComplete = (charsTyped / totalChars) * 100;
             
-            if (completeWords >= 1) {
-                const shouldShowTarget = percentComplete >= 90 && completeWords >= words.length - 1;
+            // Only show suggestions if:
+            // 1. For first word: at least 3 characters
+            // 2. For subsequent words: only after typing at least 2 chars of current word
+            // 3. OR we're near the end of typing
+            const shouldShowSuggestions = 
+                (currentWords.length === 1 && lastWord.length >= 3) ||
+                (currentWords.length > 1 && lastWord.length >= 2 && !lastWord.includes(' ')) ||
+                percentComplete >= 90;
+
+            if (shouldShowSuggestions) {
+                const shouldShowTarget = percentComplete >= 90 && currentWords.length >= words.length;
                 this.showSuggestions(partial, targetSuggestion, {
                     showTarget: shouldShowTarget
                 });
@@ -62,6 +72,8 @@ class SearchDemo {
                         targetElement.classList.remove('faded');
                     }
                 }
+            } else {
+                this.suggestionsBox.style.display = 'none';
             }
             
             await this.wait(this.typingSpeed);
@@ -69,55 +81,47 @@ class SearchDemo {
     }
 
     showSuggestions(partial, target, { showTarget }) {
-        const words = partial.split(' ');
+        const words = partial.trim().split(' ');
+        const currentWord = words[words.length - 1];
+        const previousWords = words.slice(0, -1).join(' ');
         let suggestions = [];
         
-        // Base suggestions that don't include our target
+        // Only generate suggestions based on what's currently typed
         if (words.length === 1) {
+            // First word suggestions
             suggestions = [
                 partial + " services",
-                partial + " near me",
-                partial + " companies",
+                partial + " near",
+                partial + " company",
                 partial + " help"
             ];
-        } else if (words.length === 2) {
-            suggestions = [
-                partial + " area",
-                partial + " services",
-                partial + " near me",
-                partial + " local"
-            ];
         } else {
-            const locationTerms = ['pa', 'fl', 'co', 'sc', 'dallas'];
-            const isLocation = locationTerms.some(term => partial.toLowerCase().includes(term));
+            // For subsequent words, only suggest completions for the current word
+            const locationTerms = ['pa', 'fl', 'co', 'sc', 'tx'];
+            const isLocation = locationTerms.some(term => currentWord.toLowerCase() === term);
             
             if (isLocation) {
                 suggestions = [
-                    partial + " best rated",
-                    partial + " top rated",
-                    partial + " reviews",
-                    partial + " phone number"
+                    previousWords + " " + currentWord + " best",
+                    previousWords + " " + currentWord + " top",
+                    previousWords + " " + currentWord + " near",
+                    previousWords + " " + currentWord + " local"
                 ];
             } else {
+                // Base suggestions on the current word being typed
                 suggestions = [
-                    partial + " services",
-                    partial + " professionals",
-                    partial + " experts",
-                    partial + " contact"
+                    previousWords + " " + currentWord + "s",
+                    previousWords + " " + currentWord + " area",
+                    previousWords + " " + currentWord + " near",
+                    previousWords + " " + currentWord + " local"
                 ];
             }
         }
 
-        // When it's time to show the target, ensure it's properly inserted
         if (showTarget) {
-            // Get 3 non-target suggestions
-            const otherSuggestions = suggestions
-                .filter(s => s !== target)
-                .slice(0, 3);
-            
-            // Create final suggestions array with target at random position
-            suggestions = [...otherSuggestions];
-            suggestions.splice(this.currentTargetPosition, 0, target);
+            const targetSuggestions = suggestions.slice(0, 3);
+            targetSuggestions.splice(this.currentTargetPosition, 0, target);
+            suggestions = targetSuggestions;
         }
 
         this.suggestionsBox.innerHTML = '';
@@ -125,7 +129,6 @@ class SearchDemo {
 
         suggestions.forEach(suggestion => {
             const div = document.createElement('div');
-            // Exact match for highlighting
             div.className = 'suggestion-item' + (suggestion === target && showTarget ? ' highlighted' : ' faded');
             div.textContent = suggestion;
             this.suggestionsBox.appendChild(div);
