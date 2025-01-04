@@ -232,9 +232,6 @@ function showSuggestions(suggestions) {
     const suggestionsBox = document.getElementById('suggestions');
     
     if (suggestions.length > 0) {
-        // Keep the box visible
-        suggestionsBox.classList.add('visible');
-        
         // Create all suggestion items first
         const suggestionElements = suggestions.map(text => {
             const div = document.createElement('div');
@@ -243,13 +240,14 @@ function showSuggestions(suggestions) {
             return div;
         });
 
-        // Display all items immediately
+        // Clear and show suggestions box
         suggestionsBox.innerHTML = '';
         suggestionElements.forEach(div => suggestionsBox.appendChild(div));
+        suggestionsBox.classList.add('visible');
 
         // After a delay, rearrange and highlight
         setTimeout(() => {
-            // Get the preferred result (first item in original suggestions)
+            // Get the preferred result and remaining suggestions
             const preferredResult = suggestions[0];
             const remainingSuggestions = suggestions.slice(1);
             
@@ -260,29 +258,24 @@ function showSuggestions(suggestions) {
                 [remainingSuggestions[j], remainingSuggestions[i]];
             }
             
-            // Insert preferred result at random position (1-3)
-            const insertPosition = Math.floor(Math.random() * Math.min(3, suggestions.length));
-            remainingSuggestions.splice(insertPosition, 0, preferredResult);
+            // Randomly choose position 2 or 3 for preferred result
+            const insertPosition = 1 + Math.floor(Math.random() * 2); // Results in 1 or 2
             
-            // Create new elements with the preferred one highlighted
-            const newElements = remainingSuggestions.map(text => {
-                const div = document.createElement('div');
-                div.textContent = text;
-                div.className = 'suggestion-item';
-                if (text === preferredResult) {
-                    div.classList.add('highlighted');
+            // Create final array with preferred result in position 2 or 3
+            const finalSuggestions = [...remainingSuggestions];
+            finalSuggestions.splice(insertPosition, 0, preferredResult);
+            
+            // Update elements in place without recreating
+            const items = suggestionsBox.getElementsByClassName('suggestion-item');
+            finalSuggestions.forEach((text, index) => {
+                if (items[index]) {
+                    items[index].textContent = text;
+                    items[index].classList.toggle('highlighted', text === preferredResult);
                 }
-                return div;
-            });
-
-            // Replace content smoothly
-            requestAnimationFrame(() => {
-                const tempContainer = document.createElement('div');
-                newElements.forEach(div => tempContainer.appendChild(div));
-                suggestionsBox.innerHTML = tempContainer.innerHTML;
             });
         }, 1000);
     } else {
         suggestionsBox.classList.remove('visible');
+        suggestionsBox.innerHTML = '';
     }
 }

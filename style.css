@@ -71,14 +71,13 @@ nav {
 /* Search Demo */
 .search-demo-container {
     position: absolute;
-    top: 0;
+    top: 2rem;  /* Align with hero content */
     right: calc(50% - 600px + 2rem);
-    padding: 0.5rem 0;
     display: flex;
     align-items: center;
     gap: 15px;
     z-index: 10;
-    max-height: 60px;
+    height: 34px;  /* Match input height */
 }
 
 .search-wrapper {
@@ -100,23 +99,12 @@ nav {
     background: #fff;
 }
 
-#search-input:hover {
-    box-shadow: 0 1px 6px rgba(32,33,36,.28);
-    border-color: rgba(223,225,229,0);
-}
-
-#search-input:focus {
-    box-shadow: 0 1px 6px rgba(32,33,36,.28);
-    border-color: rgba(223,225,229,0);
-    border-radius: 24px 24px 0 0;
-}
-
 .suggestions-box {
     width: 100%;
     position: absolute;
     top: 100%;
     left: 0;
-    margin-top: -1px;
+    margin-top: 2px;
     background: #fff;
     border: 1px solid #dfe1e5;
     border-radius: 0 0 24px 24px;
@@ -124,7 +112,7 @@ nav {
     overflow: hidden;
     z-index: 1000;
     display: none;
-    max-height: 200px;
+    max-height: 160px;
     overflow-y: auto;
 }
 
@@ -139,6 +127,9 @@ nav {
     color: #212121;
     line-height: 1.58;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .suggestion-item:hover {
@@ -152,11 +143,20 @@ nav {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
+.google-logo {
+    font-size: 24px;
+    letter-spacing: -2px;
+    display: flex;
+    align-items: center;
+    height: 34px;
+}
+
 /* Hero Section */
 .hero {
     background: #f8f9fa;
     padding: 40px 0;
     width: 100%;
+    position: relative;
 }
 
 .hero-content {
@@ -164,7 +164,7 @@ nav {
     margin: 0 auto;
     padding: 2rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 40px;
 }
