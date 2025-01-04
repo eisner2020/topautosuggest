@@ -142,7 +142,7 @@ nav {
     font-size: 14px;
     color: #212121;
     line-height: 1.58;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .suggestion-item:hover {
@@ -153,6 +153,7 @@ nav {
     background-color: #ffd700;
     font-weight: bold;
     color: #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 /* Hero Section */
@@ -1531,6 +1532,7 @@ section + section {
     background: #ffd700;
     font-weight: bold;
     color: #000;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 .suggestion-item.faded {

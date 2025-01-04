@@ -232,10 +232,10 @@ function showSuggestions(suggestions) {
     const suggestionsBox = document.getElementById('suggestions');
     
     if (suggestions.length > 0) {
-        // Keep the suggestions box visible
+        // Keep the box visible
         suggestionsBox.classList.add('visible');
         
-        // Create all suggestion items
+        // Create all suggestion items first
         const suggestionElements = suggestions.map(text => {
             const div = document.createElement('div');
             div.textContent = text;
@@ -243,24 +243,38 @@ function showSuggestions(suggestions) {
             return div;
         });
 
-        // Clear and append all items
+        // Display all items immediately
         suggestionsBox.innerHTML = '';
         suggestionElements.forEach(div => suggestionsBox.appendChild(div));
 
-        // After a delay, randomly highlight one suggestion
+        // After a delay, rearrange and highlight
         setTimeout(() => {
-            // Get a random suggestion to highlight
+            // Choose a random suggestion to highlight
             const randomIndex = Math.floor(Math.random() * suggestions.length);
+            const highlightedText = suggestions[randomIndex];
             
-            // Create new elements with the highlighted one in its original position
-            suggestionsBox.innerHTML = '';
-            suggestionElements.forEach((div, index) => {
-                if (index === randomIndex) {
+            // Create a new array with the highlighted item in a random position
+            let newSuggestions = suggestions.filter((_, i) => i !== randomIndex);
+            const newRandomPosition = Math.floor(Math.random() * (suggestions.length));
+            newSuggestions.splice(newRandomPosition, 0, highlightedText);
+            
+            // Create new elements with the highlighted one in its new position
+            const newElements = newSuggestions.map((text, index) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                div.className = 'suggestion-item';
+                if (text === highlightedText) {
                     div.classList.add('highlighted');
                 }
-                suggestionsBox.appendChild(div);
+                return div;
             });
-        }, 1000); // 1 second delay to make the transition more noticeable
+
+            // Replace content without removing the box
+            requestAnimationFrame(() => {
+                suggestionsBox.innerHTML = '';
+                newElements.forEach(div => suggestionsBox.appendChild(div));
+            });
+        }, 1000);
     } else {
         suggestionsBox.classList.remove('visible');
     }
