@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Search Demo Prototype</title>
+    <title>Search Demo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="search-demo-container">
-        <div class="search-container">
-            <div class="google-search">
-                <div class="search-box">
-                    <div class="google-logo">
-                        <span style="color: #4285f4">G</span>
-                        <span style="color: #ea4335">o</span>
-                        <span style="color: #fbbc05">o</span>
-                        <span style="color: #4285f4">g</span>
-                        <span style="color: #34a853">l</span>
-                        <span style="color: #ea4335">e</span>
-                    </div>
-                    <input type="text" id="search-input" autocomplete="off">
-                </div>
-                <div class="suggestions-box" id="suggestions">
-                    <!-- Suggestions will be populated here -->
-                </div>
-            </div>
+    <main class="search-demo-container">
+        <div class="google-logo">
+            <span style="color: #4285f4">G</span>
+            <span style="color: #ea4335">o</span>
+            <span style="color: #fbbc05">o</span>
+            <span style="color: #4285f4">g</span>
+            <span style="color: #34a853">l</span>
+            <span style="color: #ea4335">e</span>
         </div>
-    </div>
+        <div class="search-wrapper">
+            <input type="text" id="search-input" autocomplete="off" placeholder="Search...">
+            <div id="suggestions" class="suggestions-box"></div>
+        </div>
+    </main>
     <script src="demo-config.js"></script>
     <script src="script.js"></script>
 </body>

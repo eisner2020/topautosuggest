@@ -1,3 +1,19 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #fff;
+    min-height: 100vh;
+    width: 100%;
+}
+
 :root {
     --primary-color: #1a73e8;
     --secondary-color: #4285f4;
@@ -191,7 +207,7 @@ header {
 
     .search-demo-container {
         width: 100%;
-        padding: 20px 0;
+        padding: 20px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -1372,50 +1388,25 @@ section + section {
 
 .search-demo-container {
     width: 100%;
-    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
-    margin: 40px 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: #fff;
 }
 
 .google-logo {
-    font-size: 2.5em;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    letter-spacing: -2px;
+    font-size: 32px;
+    font-weight: 500;
+    margin: 20px 0;
+    letter-spacing: -1px;
 }
 
-.demo-layout {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 40px;
-    margin-top: 20px;
-}
-
-.example-container {
-    flex: 1;
-    max-width: 65%;
-}
-
-.search-demo-container {
-    flex: 0 0 35%;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 20px;
-}
-
-.search-container {
+.search-wrapper {
     width: 100%;
-    max-width: 100%;
-    padding: 0;
-    margin: 0;
+    max-width: 600px;
+    position: relative;
 }
 
 /* Ensure suggestions don't overflow */
@@ -1428,4 +1419,17 @@ section + section {
     position: absolute;
     width: 100%;
     z-index: 101;
+}
+
+/* iOS Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    #search-input {
+        font-size: 16px;
+        padding: 0 20px;
+    }
+
+    .suggestion-item {
+        padding: 16px 20px;
+        font-size: 16px;
+    }
 }
