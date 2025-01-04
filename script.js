@@ -227,3 +227,34 @@ function updateMetricsDisplay(data) {
         errorElement.style.display = 'none';
     }
 }
+
+function showSuggestions(suggestions) {
+    const suggestionsBox = document.getElementById('suggestions');
+    suggestionsBox.innerHTML = '';
+    
+    if (suggestions.length > 0) {
+        suggestions.forEach((text, index) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            div.className = 'suggestion-item';
+            suggestionsBox.appendChild(div);
+        });
+
+        // Add highlight after a short delay
+        setTimeout(() => {
+            const items = suggestionsBox.getElementsByClassName('suggestion-item');
+            if (items.length > 0) {
+                // Remove any existing highlights
+                Array.from(items).forEach(item => item.classList.remove('highlighted'));
+                
+                // Randomly select an item to highlight
+                const randomIndex = Math.floor(Math.random() * items.length);
+                items[randomIndex].classList.add('highlighted');
+            }
+        }, 500); // 500ms delay
+
+        suggestionsBox.classList.add('visible');
+    } else {
+        suggestionsBox.classList.remove('visible');
+    }
+}
