@@ -9,6 +9,11 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve prototype directory first
+app.use(express.static(path.join(__dirname, 'search-demo-prototype')));
+
+// Then serve main directory for any other files
 app.use(express.static(path.join(__dirname)));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -274,49 +279,102 @@ function getSmartEstimation(keyword = '', city = '') {
 
 // Email configuration
 const transporter = nodemailer.createTransport({
-    service: 'iCloud',
+    host: 'smtp.mail.me.com',
+    port: 587,
+    secure: false,
     auth: {
-        user: process.env.EMAIL_USER || 'eisner2020@mac.com',
-        pass: process.env.EMAIL_PASSWORD
+        user: process.env.EMAIL_USER || 'your-email@icloud.com',
+        pass: process.env.EMAIL_PASS || 'your-app-specific-password'
     }
 });
 
 // Contact form endpoint
 app.post('/api/contact', async (req, res) => {
     try {
-        const { name, email, phone, message } = req.body;
-        
-        // Email content
+        const { name, email, phone, message, searchData } = req.body;
+
+        // Validate required fields
+        if (!name || !email || !phone) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name, email, and phone are required'
+            });
+        }
+
+        // Create email content
         const mailOptions = {
-            from: process.env.EMAIL_USER || 'eisner2020@mac.com',
-            to: process.env.CONTACT_EMAIL || 'eisner2020@mac.com',
-            subject: 'New Contact Form Submission - TopAutosuggest',
+            from: process.env.EMAIL_USER || 'your-email@icloud.com',
+            to: process.env.EMAIL_USER || 'your-email@icloud.com',
+            subject: 'New Top Autosuggest Lead',
             text: `
+New Contact Form Submission
+
+Contact Information:
 Name: ${name}
 Email: ${email}
 Phone: ${phone}
-Message: ${message}
+Message: ${message || 'No message provided'}
+
+Search Data:
+${searchData ? `
+Keywords: ${searchData.keywords || 'N/A'}
+City: ${searchData.city || 'N/A'}
+Company Name: ${searchData.companyName || 'N/A'}
+Monthly Searches: ${searchData.monthlySearches || 'N/A'}
+` : 'No search data available'}
             `,
             html: `
-<h2>New Contact Form Submission</h2>
-<p><strong>Name:</strong> ${name}</p>
-<p><strong>Email:</strong> ${email}</p>
-<p><strong>Phone:</strong> ${phone}</p>
-<p><strong>Message:</strong> ${message}</p>
+                <h2>New Contact Form Submission</h2>
+                
+                <h3>Contact Information:</h3>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Message:</strong> ${message || 'No message provided'}</p>
+
+                ${searchData ? `
+                <h3>Search Data:</h3>
+                <p><strong>Keywords:</strong> ${searchData.keywords || 'N/A'}</p>
+                <p><strong>City:</strong> ${searchData.city || 'N/A'}</p>
+                <p><strong>Company Name:</strong> ${searchData.companyName || 'N/A'}</p>
+                <p><strong>Monthly Searches:</strong> ${searchData.monthlySearches || 'N/A'}</p>
+                ` : '<p>No search data available</p>'}
             `
         };
 
         // Send email
         await transporter.sendMail(mailOptions);
         
-        res.json({ success: true, message: 'Message sent successfully' });
+        res.json({
+            success: true,
+            message: 'Message sent successfully'
+        });
     } catch (error) {
         console.error('Error sending email:', error);
-        res.status(500).json({ success: false, message: 'Failed to send message' });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to send message'
+        });
     }
 });
 
 // API endpoint for keyword data
+app.post('/api/keyword-data', async (req, res) => {
+    try {
+        const { keyword, location } = req.body;
+        if (!keyword || !location) {
+            return res.status(400).json({ error: 'Keyword and location are required' });
+        }
+
+        const data = await getKeywordData(keyword, location);
+        res.json(data);
+    } catch (error) {
+        console.error('Error getting keyword data:', error);
+        res.status(500).json({ error: 'Error getting keyword data' });
+    }
+});
+
+// API endpoint for search volume data
 app.post('/api/search-volume', async (req, res) => {
     try {
         const { keyword, city } = req.body;

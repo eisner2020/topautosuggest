@@ -226,6 +226,50 @@ function updateMetricsDisplay(data) {
     if (errorElement) {
         errorElement.style.display = 'none';
     }
+
+    const resultsDiv = document.getElementById('results');
+    if (resultsDiv) {
+        const targetKeywords = data.target_keywords;
+        const companyName = data.company_name;
+        const city = data.city;
+
+        const searchContainer = document.createElement('div');
+        searchContainer.innerHTML = `
+            <div class="results-container">
+                <h3>Search Data for "${targetKeywords}" in ${city}</h3>
+                <div class="data-point">
+                    <strong>Monthly Searches:</strong> ${data.monthly_searches.toLocaleString()}
+                </div>
+                <div class="search-demo-container">
+                    <div class="search-wrapper">
+                        <input type="text" id="custom-search-input" value="" placeholder="Search...">
+                        <div id="custom-suggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const dominateSection = document.createElement('div');
+        dominateSection.className = 'dominate-section';
+        dominateSection.innerHTML = `
+            <h3>Ready to Dominate Search Results?</h3>
+            <p>Get a personalized analysis of how we can help your business appear in Google's suggestions. Our team will create a custom strategy based on your specific market and goals.</p>
+        `;
+
+        resultsDiv.innerHTML = '';
+        resultsDiv.appendChild(searchContainer);
+        resultsDiv.appendChild(dominateSection);
+
+        // Initialize a new search demo for the custom search
+        const customDemo = new SearchDemo({
+            inputId: 'custom-search-input',
+            suggestionsId: 'custom-suggestions'
+        });
+
+        // Add the demo with the target suggestion
+        customDemo.addDemo(`${targetKeywords} ${city}`, `${targetKeywords} ${city} ${companyName}`);
+        customDemo.start();
+    }
 }
 
 function showSuggestions(suggestions) {
