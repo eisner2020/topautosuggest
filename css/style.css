@@ -190,7 +190,7 @@ h3 {
     padding: 2rem;
     border-radius: 8px;
     margin: 2rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .trust-indicator i {
@@ -217,7 +217,19 @@ h3 {
 .final-message {
     font-size: 1.4rem;
     color: #007bff;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.discount-note {
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 1.5rem;
+    font-style: italic;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
 }
 
 .prev, .next {
@@ -225,15 +237,22 @@ h3 {
     position: absolute;
     top: 50%;
     width: auto;
-    padding: 16px;
+    padding: 20px;
     margin-top: -22px;
     color: #007bff;
     font-weight: bold;
-    font-size: 24px;
-    transition: 0.6s ease;
+    font-size: 28px;
+    transition: 0.3s ease;
     border-radius: 0 3px 3px 0;
     user-select: none;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    width: 40px;
+    z-index: 100;
 }
 
 .next {
@@ -244,12 +263,18 @@ h3 {
 .prev:hover, .next:hover {
     background-color: #007bff;
     color: white;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
 }
 
 .dot-container {
     text-align: center;
     padding: 20px;
     background: white;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .dot {
@@ -260,16 +285,28 @@ h3 {
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
-    transition: background-color 0.6s ease;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .active, .dot:hover {
     background-color: #007bff;
 }
 
-.fade {
-    animation-name: fade;
-    animation-duration: 1.5s;
+.navigation-hint {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.8;
 }
 
 @keyframes fade {
@@ -279,49 +316,65 @@ h3 {
 
 .cta-button {
     display: inline-block;
-    padding: 15px 30px;
+    padding: 18px 35px;
     background-color: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     transition: all 0.3s ease;
     border: 2px solid #007bff;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
 }
 
 .cta-button:hover {
     background-color: white;
     color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 123, 255, 0.3);
 }
 
-.scroll-hint {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    animation: bounce 2s infinite;
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
 }
 
-.scroll-hint p {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 0.5rem;
+.animation-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
 
-.scroll-hint i {
+.animation-toggle:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.animation-toggle i {
     color: #007bff;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
+.animation-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.animate-text {
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform;
 }
