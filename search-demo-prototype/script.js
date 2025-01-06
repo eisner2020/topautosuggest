@@ -174,21 +174,12 @@ class TopSearchDemo {
 class BottomSearchDemo extends TopSearchDemo {
     constructor(options = {}) {
         super(options);
+        this.isContinuous = true;
     }
 
     async start() {
         if (!this.demos.length) return;
-        
-        while (true) {
-            const demo = this.demos[this.currentDemoIndex];
-            this.targetSuggestion = demo.target;
-            await this.typeText(demo.keyword);
-            
-            this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
-            
-            // Pause before next demo
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
+        await super.start();
     }
 }
 
