@@ -1,0 +1,53 @@
+{
+    "homes for sale": {
+        "dallas": {
+            "monthly": 27100,
+            "cpc": 2.15,
+            "competition": "high"
+        },
+        "austin": {
+            "monthly": 22400,
+            "cpc": 1.95,
+            "competition": "high"
+        },
+        "houston": {
+            "monthly": 24800,
+            "cpc": 1.85,
+            "competition": "high"
+        }
+    },
+    "luxury homes": {
+        "dallas": {
+            "monthly": 4400,
+            "cpc": 3.25,
+            "competition": "high"
+        },
+        "austin": {
+            "monthly": 3600,
+            "cpc": 2.95,
+            "competition": "high"
+        },
+        "houston": {
+            "monthly": 3900,
+            "cpc": 2.85,
+            "competition": "high"
+        }
+    },
+    "apartments for rent": {
+        "dallas": {
+            "monthly": 18200,
+            "cpc": 2.45,
+            "competition": "high"
+        },
+        "austin": {
+            "monthly": 14800,
+            "cpc": 2.25,
+            "competition": "high"
+        },
+        "houston": {
+            "monthly": 16500,
+            "cpc": 2.15,
+            "competition": "high"
+        }
+    }
+}

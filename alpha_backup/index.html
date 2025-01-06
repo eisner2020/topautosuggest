@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search Engines Recommend Your Business</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .metrics-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .metric {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .metric label {
+            font-weight: bold;
+            color: #555;
+            margin-right: 10px;
+        }
+
+        #error-message-2 {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        #data-source-2 {
+            color: #1976d2;
+            font-style: italic;
+        }
+
+        .search-term {
+            font-weight: bold;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+        
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Top Autosuggest</h1>
+                <p class="hero-subtitle">Search Engines Recommend Your Business in the autosuggest dropdown</p>
+                <p class="hero-description">Boost your online presence by appearing in search suggestions. When customers search, make sure they find you first.</p>
+                <a href="#example" class="primary-button">Try Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <h3>1. Analyze Your Business</h3>
+                    <p>We analyze your business type and target market to identify the most valuable search keywords.</p>
+                </div>
+                <div class="step">
+                    <h3>2. Optimize Suggestions</h3>
+                    <p>Our system optimizes your business to appear in relevant search suggestions across multiple keywords.</p>
+                </div>
+                <div class="step">
+                    <h3>3. Monitor & Adjust</h3>
+                    <p>We continuously monitor performance and adjust strategies to maintain and improve your visibility.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="example">
+            <h2>See It In Action</h2>
+            <div class="example-container">
+                <div class="search-demo">
+                    <form id="search-form" class="search-form">
+                        <div class="input-controls">
+                            <div class="input-group">
+                                <label for="niche-input">Target Keywords</label>
+                                <input type="text" id="niche-input" name="niche" placeholder="e.g., homes for sale">
+                            </div>
+                            <div class="input-group">
+                                <label for="city-input">City</label>
+                                <input type="text" id="city-input" name="city" placeholder="e.g., Dallas">
+                            </div>
+                            <div class="input-group">
+                                <label for="company-name">Company Name</label>
+                                <input type="text" id="company-name" name="company-name" placeholder="e.g., Williamson Realty">
+                            </div>
+                            <div class="input-group">
+                                <label for="business-type">Business Type</label>
+                                <input type="text" id="business-type" name="business-type" placeholder="e.g., Real Estate">
+                            </div>
+                            <button type="submit" class="update-button">Get Search Data</button>
+                        </div>
+                    </form>
+
+                    <div class="search-box-container">
+                        <div class="google-logo">
+                            <span class="g">G</span><span class="o1">o</span><span class="o2">o</span><span class="g2">g</span><span class="l">l</span><span class="e">e</span>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" id="demo-search" readonly>
+                            <div class="search-suggestion">
+                                <span id="demo-suggestion"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="error-message-2" style="display: none;"></div>
+
+                    <div class="metrics-container">
+                        <div class="result-item">
+                            <div class="result-header">
+                                <h3>Monthly Search Estimate</h3>
+                                <div id="monthly-searches" class="value">-</div>
+                                <div id="data-source-2" class="source"></div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">
+                                <h3>Cost Per Click</h3>
+                                <div id="ppc-cost-2" class="value">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>Why Choose Top Autosuggest?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Feature-1.png" alt="Smart Predictions" class="feature-icon">
+                    <h3>Smart Predictions</h3>
+                    <p>AI-powered suggestions that understand user intent and context</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Feature-2.png" alt="Lightning Fast" class="feature-icon">
+                    <h3>Lightning Fast</h3>
+                    <p>Instant suggestions with minimal latency</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Feature-3.png" alt="Easy Integration" class="feature-icon">
+                    <h3>Easy Integration</h3>
+                    <p>Simple implementation with any existing search system</p>
+                </div>
+                <div class="feature-card">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Feature-4.png" alt="Analytics Dashboard" class="feature-icon">
+                    <h3>Analytics Dashboard</h3>
+                    <p>Comprehensive insights into search patterns</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="benefits">
+            <h2>Benefits of Top Autosuggest</h2>
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Benefit-1.png" alt="Increased Conversions" class="benefit-icon">
+                    <h3>Increased Conversions</h3>
+                    <p>Guide users to exactly what they're looking for, boosting conversion rates</p>
+                </div>
+                <div class="benefit">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Benefit-2.png" alt="Better User Experience" class="benefit-icon">
+                    <h3>Better User Experience</h3>
+                    <p>Provide a seamless, intuitive search experience that users love</p>
+                </div>
+                <div class="benefit">
+                    <img src="https://totalfrontpage.com/wp-content/uploads/2024/01/TFP-Benefit-3.png" alt="Valuable Insights" class="benefit-icon">
+                    <h3>Valuable Insights</h3>
+                    <p>Gain deep insights into user search patterns and behavior</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Get Started with Top Autosuggest</h2>
+            <form id="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="company" name="company" placeholder="Company Name" required>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Tell us about your needs" required></textarea>
+                </div>
+                <button type="submit" class="primary-button">Get Started</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="images/logo.png" alt="Top Autosuggest" class="footer-logo">
+                <h4>Top Autosuggest</h4>
+                <p>Making your business visible in search suggestions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Links</h4>
+                <a href="#features">Features</a>
+                <a href="#benefits">Benefits</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Top Autosuggest. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
