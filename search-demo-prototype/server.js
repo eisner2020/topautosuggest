@@ -5,11 +5,26 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), {
+    // Add proper cache control for static assets
+    maxAge: '1h',
+    // Add proper error handling for static files
+    fallthrough: true,
+    // Enable directory listing in production
+    index: 'index.html'
+}));
 app.use(bodyParser.json());
+
+// Handle 404 errors for static files
+app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+        return res.status(404).sendFile(path.join(__dirname, 'index.html'));
+    }
+    next();
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -22,18 +37,18 @@ app.use((err, req, res, next) => {
 
 // Email transporter
 const transporter = nodemailer.createTransport({
-    host: 'smtp.mail.me.com',
-    port: 587,
+    host: process.env.SMTP_HOST || 'smtp.mail.me.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
     secure: false,
     auth: {
-        user: 'eisner2020@icloud.com',
-        pass: 'jguq-juhk-dzwm-arfv'
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     },
     tls: {
         rejectUnauthorized: false
     },
     logger: true,
-    debug: true // Include debug information
+    debug: process.env.NODE_ENV !== 'production' // Only debug in non-production
 });
 
 // Verify email connection
@@ -72,8 +87,8 @@ app.post('/submit-form', async (req, res) => {
 
         // Send email
         const mailOptions = {
-            from: 'eisner2020@icloud.com',
-            to: 'eisner2020@icloud.com',
+            from: process.env.SMTP_USER,
+            to: process.env.SMTP_USER, // Send to the same email
             subject: 'New Search Demo Submission',
             html: emailContent
         };
@@ -124,8 +139,8 @@ app.post('/contact', async (req, res) => {
         `;
 
         const mailOptions = {
-            from: 'eisner2020@icloud.com',
-            to: 'eisner2020@icloud.com',
+            from: process.env.SMTP_USER,
+            to: process.env.SMTP_USER, // Send to the same email
             subject: 'New Contact Form Submission',
             html: emailContent
         };
@@ -152,6 +167,9 @@ app.post('/contact', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+// Start the server
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on port ${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`Static files being served from: ${path.join(__dirname)}`);
 });

@@ -1,4 +1,3 @@
-// Search demo implementation
 class TopSearchDemo {
     constructor(options = {}) {
         this.input = document.getElementById(options.inputId);
@@ -192,9 +191,9 @@ class BottomSearchDemo extends TopSearchDemo {
     }
 }
 
-// Initialize everything when DOM is loaded
+// Initialize forms when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize main search demo
+    // Initialize search demo
     const mainDemo = new TopSearchDemo({
         inputId: 'search-input',
         suggestionsId: 'suggestions',
@@ -203,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Add all keywords
-    const allKeywords = [
+    [
         ["chimney sweep pottstown pa", "chimney sweep pottstown pa wells & sons"],
         ["commercial solar orange county", "commercial solar orange county rep solar"],
         ["dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics"],
@@ -245,10 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ["ac repair carrollton tx", "ac repair carrollton tx calahan construction and air"],
         ["carpet cleaning fort wayne", "carpet cleaning fort wayne chem dry of allen county"],
         ["newport ri realtor", "newport ri realtor jami krause"]
-    ];
-
-    // Add all keywords to main demo
-    allKeywords.forEach(([keyword, target]) => mainDemo.addDemo(keyword, target));
+    ].forEach(([keyword, target]) => mainDemo.addDemo(keyword, target));
+    
     mainDemo.start();
 
     // Initialize bottom search demo
@@ -263,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bottomDemo.addDemo("dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics");
     bottomDemo.addDemo("rehab loveland co", "rehab loveland co new life recovery");
     bottomDemo.addDemo("divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates");
+    
     bottomDemo.start();
 
     // Initialize form handlers
@@ -276,86 +274,3 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.addEventListener('submit', handleContactForm);
     }
 });
-
-// Form handling functions
-async function handleSearchDataForm(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    try {
-        const response = await fetch('/submit-search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const result = await response.json();
-        console.log('Success:', result);
-        
-        // Clear form
-        form.reset();
-        
-        // Show success message
-        const errorDiv = document.getElementById('search-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'Thank you for your submission!';
-            errorDiv.style.color = '#4CAF50';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        const errorDiv = document.getElementById('search-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'There was an error submitting your data. Please try again.';
-            errorDiv.style.color = '#f44336';
-        }
-    }
-}
-
-async function handleContactForm(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    try {
-        const response = await fetch('/submit-contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const result = await response.json();
-        console.log('Success:', result);
-        
-        // Clear form
-        form.reset();
-        
-        // Show success message
-        const errorDiv = document.getElementById('contact-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'Thank you for your message! We will get back to you soon.';
-            errorDiv.style.color = '#4CAF50';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        const errorDiv = document.getElementById('contact-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'There was an error sending your message. Please try again.';
-            errorDiv.style.color = '#f44336';
-        }
-    }
-}
