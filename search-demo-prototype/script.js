@@ -1,4 +1,3 @@
-// Search demo implementation
 class TopSearchDemo {
     constructor(options = {}) {
         this.input = document.getElementById(options.inputId);
@@ -9,7 +8,7 @@ class TopSearchDemo {
         this.isTyping = false;
         this.currentSuggestions = [];
         this.targetSuggestion = null;
-        this.isContinuous = true;
+        this.isContinuous = true; // Always run continuously
         this.highlightLoop = options.highlightLoop || false;
         this.currentTimeout = null;
     }
@@ -174,18 +173,33 @@ class TopSearchDemo {
 class BottomSearchDemo extends TopSearchDemo {
     constructor(options = {}) {
         super(options);
-        this.isContinuous = true;
     }
 
     async start() {
         if (!this.demos.length) return;
-        await super.start();
+        
+        // Shuffle the demos array
+        for (let i = this.demos.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.demos[i], this.demos[j]] = [this.demos[j], this.demos[i]];
+        }
+        
+        while (true) {
+            const demo = this.demos[this.currentDemoIndex];
+            this.targetSuggestion = demo.target;
+            await this.typeText(demo.keyword);
+            
+            this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
+            
+            // Pause before next demo
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
     }
 }
 
-// Initialize everything when DOM is loaded
+// Initialize forms when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize main search demo
+    // Initialize search demo
     const mainDemo = new TopSearchDemo({
         inputId: 'search-input',
         suggestionsId: 'suggestions',
@@ -193,67 +207,41 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightLoop: true
     });
 
-    // Add all keywords
-    const allKeywords = [
-        ["chimney sweep pottstown pa", "chimney sweep pottstown pa wells & sons"],
-        ["commercial solar orange county", "commercial solar orange county rep solar"],
-        ["dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics"],
-        ["rehab loveland co", "rehab loveland co new life recovery"],
-        ["divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates"],
-        ["car accident lawyer miami fl", "car accident lawyer miami fl 1-800 ask gary"],
-        ["fence companies in albuquerque", "fence companies in albuquerque amazing gates"],
-        ["car accident lawyer columbia sc", "car accident lawyer columbia sc s chris davis"],
-        ["air duct cleaning dallas", "air duct cleaning dallas airductcleanup.com"],
-        ["divorce attorney charlotte", "divorce attorney charlotte n stallard & bellof plic"],
-        ["janitorial services dallas", "janitorial services dallas delta janitorial"],
-        ["seo toronto", "seo toronto dit web solutions"],
-        ["botox denver", "botox denver adrienne stewart md"],
-        ["coolsculpting denver", "coolsculpting denver adrienne stewart md"],
-        ["laser hair removal denver", "laser hair removal denver adrienne stewart md"],
-        ["lip injections denver", "lip injections denver adrienne stewart md"],
-        ["best plastic surgeon california", "best plastic surgeon california dr simon ourian"],
-        ["colorado springs home loan", "colorado springs home loan fidelity mortgage solutions"],
-        ["in home care sacramento", "in home care sacramento fijian homecare angels"],
-        ["small business flight school", "small business flight school flywheel business advisors"],
-        ["home inspector tampa fl", "home inspector tampa fl forscher property inspections"],
-        ["denver auto accident lawyer", "denver auto accident lawyer frederick ganderton Ilp"],
-        ["personal injury lawyer syracuse ny", "personal injury lawyer syracuse ny harding mazzotti Ilp"],
-        ["car accident lawyer boston", "car accident lawyer boston harding mazzotti lIp"],
-        ["car accident lawyer nyc", "car accident lawyer nyc harding mazzotti lIp"],
-        ["personal injury lawyer boston", "personal injury lawyer boston harding mazzotti Ilp"],
-        ["car accident lawyer buffalo", "car accident lawyer buffalo harding mazzotti Ilp"],
-        ["criminal defense attorney fargo", "criminal defense attorney fargo haugen moeckel"],
-        ["car accident lawyer fort myers", "car accident lawyer fort myers marc I shapiro pa"],
-        ["personal injury attorneys fort myers", "personal injury attorneys fort myers marc shapiro"],
-        ["children's dentistry scottsdale", "children's dentistry scottsdale palm valley pediatric"],
-        ["dwi lawyer new jersey", "dwi lawyer new jersey kugel law firm"],
-        ["accountant in los angeles", "accountant in los angeles abc financial group"],
-        ["home theater scottsdale", "home theater scottsdale call beyond audio"],
-        ["facial balancing winter park", "facial balancing winter park the bougainvillea"],
-        ["spot care winter park", "spot care winter park the bougainvillea clinique"],
-        ["rehab san jose", "rehab san jose bright future recovery"],
-        ["ac repair frisco tx", "ac repair frisco tx calahan construction and air"],
-        ["ac repair carrollton tx", "ac repair carrollton tx calahan construction and air"],
-        ["carpet cleaning fort wayne", "carpet cleaning fort wayne chem dry of allen county"],
-        ["newport ri realtor", "newport ri realtor jami krause"]
-    ];
-
-    // Add all keywords to main demo
-    allKeywords.forEach(([keyword, target]) => mainDemo.addDemo(keyword, target));
+    // Add the real demo keywords
+    mainDemo.addDemo("chimney sweep pottstown pa", "chimney sweep pottstown pa wells & sons");
+    mainDemo.addDemo("commercial solar orange county", "commercial solar orange county rep solar");
+    mainDemo.addDemo("dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics");
+    mainDemo.addDemo("rehab loveland co", "rehab loveland co new life recovery");
+    mainDemo.addDemo("divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates");
+    mainDemo.addDemo("car accident lawyer miami fl", "car accident lawyer miami fl 1-800 ask gary");
+    mainDemo.addDemo("fence companies in albuquerque", "fence companies in albuquerque amazing gates");
+    mainDemo.addDemo("car accident lawyer columbia sc", "car accident lawyer columbia sc s chris davis");
+    mainDemo.addDemo("air duct cleaning dallas", "air duct cleaning dallas airductcleanup.com");
+    mainDemo.addDemo("divorce attorney charlotte", "divorce attorney charlotte n stallard & bellof plic");
+    
+    // Add new keywords
+    mainDemo.addDemo("janitorial services dallas", "janitorial services dallas delta janitorial");
+    mainDemo.addDemo("seo toronto", "seo toronto dit web solutions");
+    mainDemo.addDemo("botox denver", "botox denver adrienne stewart md");
+    mainDemo.addDemo("coolsculpting denver", "coolsculpting denver adrienne stewart md");
+    mainDemo.addDemo("laser hair removal denver", "laser hair removal denver adrienne stewart md");
+    mainDemo.addDemo("lip injections denver", "lip injections denver adrienne stewart md");
+    mainDemo.addDemo("best plastic surgeon california", "best plastic surgeon california dr simon ourian");
+    mainDemo.addDemo("colorado springs home loan", "colorado springs home loan fidelity mortgage solutions");
+    mainDemo.addDemo("in home care sacramento", "in home care sacramento fijian homecare angels");
+    mainDemo.addDemo("small business flight school", "small business flight school flywheel business advisors");
+    
     mainDemo.start();
 
-    // Initialize bottom search demo
-    const bottomDemo = new BottomSearchDemo({
+    // Initialize bottom demo
+    window.bottomDemo = new BottomSearchDemo({
         inputId: 'bottom-search-input',
-        suggestionsId: 'bottom-suggestions',
-        continuous: true,
-        highlightLoop: true
+        suggestionsId: 'bottom-suggestions'
     });
-
-    // Add demo keywords for bottom search (unchanged)
-    bottomDemo.addDemo("dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics");
-    bottomDemo.addDemo("rehab loveland co", "rehab loveland co new life recovery");
+    
+    // Keep just one demo for the bottom search to make it clearer
     bottomDemo.addDemo("divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates");
+    
     bottomDemo.start();
 
     // Initialize form handlers
@@ -262,91 +250,145 @@ document.addEventListener('DOMContentLoaded', () => {
         searchForm.addEventListener('submit', handleSearchDataForm);
     }
 
-    const contactForm = document.getElementById('contact-form');
+    const contactForm = document.querySelector('.contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', handleContactForm);
     }
 });
 
-// Form handling functions
+// Form handling for search data
 async function handleSearchDataForm(event) {
     event.preventDefault();
+
     const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    const targetKeywords = form.querySelector('#target-keywords')?.value?.trim();
+    const city = form.querySelector('#city')?.value?.trim();
+    const companyName = form.querySelector('#company-name')?.value?.trim();
     
+    const errorElement = document.getElementById('form-error');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // Clear previous error
+    if (errorElement) {
+        errorElement.style.display = 'none';
+        errorElement.textContent = '';
+    }
+
+    // Validate required fields
+    if (!targetKeywords || !city || !companyName) {
+        if (errorElement) {
+            errorElement.style.display = 'block';
+            errorElement.textContent = 'Please fill in all required fields.';
+        }
+        return;
+    }
+
+    // Disable submit button and show loading state
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Processing...';
+
     try {
-        const response = await fetch('/submit-search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        // Show results
+        const resultsDiv = document.getElementById('results');
+        if (resultsDiv) {
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            const searchContainer = document.createElement('div');
+            searchContainer.innerHTML = `
+                <div class="results-container">
+                    <h3>Search Data for "${targetKeywords} ${city}"</h3>
+                    <div class="data-point">
+                        <strong>Monthly Searches:</strong> ${Math.floor(Math.random() * 10000).toLocaleString()}
+                    </div>
+                    <div class="search-demo-container">
+                        <div class="google-logo">
+                            <span style="color:#4285f4">G</span><span style="color:#ea4335">o</span><span style="color:#fbbc05">o</span><span style="color:#4285f4">g</span><span style="color:#34a853">l</span><span style="color:#ea4335">e</span>
+                        </div>
+                        <div class="search-wrapper">
+                            <input type="text" id="custom-search-input" placeholder="Search...">
+                            <div id="custom-suggestions" class="suggestions-box"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            resultsDiv.innerHTML = '';
+            resultsDiv.appendChild(searchContainer);
+
+            // Initialize a new search demo for the custom search
+            const customDemo = new TopSearchDemo({
+                inputId: 'custom-search-input',
+                suggestionsId: 'custom-suggestions',
+                highlightLoop: true,
+                typingSpeed: 100  
+            });
+
+            // Set up the demo with the search query and target
+            const searchQuery = `${targetKeywords} ${city}`;
+            const targetSuggestion = `${targetKeywords} ${city} ${companyName}`;
+            customDemo.addDemo(searchQuery, targetSuggestion);
+            
+            customDemo.start();
         }
-        
-        const result = await response.json();
-        console.log('Success:', result);
-        
-        // Clear form
-        form.reset();
-        
-        // Show success message
-        const errorDiv = document.getElementById('search-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'Thank you for your submission!';
-            errorDiv.style.color = '#4CAF50';
-        }
+
     } catch (error) {
-        console.error('Error:', error);
-        const errorDiv = document.getElementById('search-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'There was an error submitting your data. Please try again.';
-            errorDiv.style.color = '#f44336';
+        console.error('Form submission error:', error);
+        if (errorElement) {
+            errorElement.style.display = 'block';
+            errorElement.textContent = error.message || 'Failed to submit form. Please try again.';
+            errorElement.scrollIntoView({ behavior: 'smooth' });
         }
+    } finally {
+        // Re-enable submit button and restore text
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
     }
 }
 
+// Contact form handling
 async function handleContactForm(event) {
     event.preventDefault();
+
     const form = event.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    const formData = {
+        name: form.querySelector('#contact-name').value.trim(),
+        email: form.querySelector('#contact-email').value.trim(),
+        message: form.querySelector('#contact-message').value.trim()
+    };
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
     
+    // Disable submit button and show loading state
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending...';
+
     try {
-        const response = await fetch('/submit-contact', {
+        const response = await fetch('/contact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(formData)
         });
-        
+
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(data.message || 'Failed to send message');
         }
-        
-        const result = await response.json();
-        console.log('Success:', result);
-        
-        // Clear form
-        form.reset();
-        
+
         // Show success message
-        const errorDiv = document.getElementById('contact-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'Thank you for your message! We will get back to you soon.';
-            errorDiv.style.color = '#4CAF50';
-        }
+        alert('Message sent successfully! We will get back to you soon.');
+        form.reset();
+
     } catch (error) {
-        console.error('Error:', error);
-        const errorDiv = document.getElementById('contact-error');
-        if (errorDiv) {
-            errorDiv.textContent = 'There was an error sending your message. Please try again.';
-            errorDiv.style.color = '#f44336';
-        }
+        console.error('Contact form error:', error);
+        alert(error.message || 'Failed to send message. Please try again.');
+    } finally {
+        // Re-enable submit button and restore text
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
     }
 }

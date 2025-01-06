@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8000;
 
 // Middleware
 app.use(express.static(path.join(__dirname), {
@@ -17,6 +17,20 @@ app.use(express.static(path.join(__dirname), {
     index: 'index.html'
 }));
 app.use(bodyParser.json());
+
+// Email transporter
+const transporter = nodemailer.createTransport({
+    host: 'smtp.mail.me.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: 'eisner2020@mac.com',
+        pass: 'jguq-juhk-dzwm-arfv'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
 
 // Handle 404 errors for static files
 app.use((req, res, next) => {
@@ -35,35 +49,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Email transporter
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.mail.me.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    logger: true,
-    debug: process.env.NODE_ENV !== 'production' // Only debug in non-production
-});
-
-// Verify email connection
-transporter.verify(function(error, success) {
-    if (error) {
-        console.error('Email configuration error:', error);
-    } else {
-        console.log('Server is ready to send emails');
-    }
-});
-
-// Form submission endpoint
-app.post('/submit-form', async (req, res) => {
+// Form submission endpoint (handles both /submit-form and /submit-search)
+app.post(['/submit-form', '/submit-search'], async (req, res) => {
     try {
-        const { targetKeywords, city, companyName, businessType } = req.body;
+        const { targetKeywords, city, companyName } = req.body;
         
         // Validate required fields
         if (!targetKeywords || !city || !companyName) {
@@ -82,13 +71,12 @@ app.post('/submit-form', async (req, res) => {
             <p><strong>Target Keywords:</strong> ${targetKeywords}</p>
             <p><strong>City:</strong> ${city}</p>
             <p><strong>Company Name:</strong> ${companyName}</p>
-            <p><strong>Business Type:</strong> ${businessType || 'Not specified'}</p>
         `;
 
         // Send email
         const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: process.env.SMTP_USER, // Send to the same email
+            from: 'eisner2020@mac.com',
+            to: 'eisner2020@mac.com',
             subject: 'New Search Demo Submission',
             html: emailContent
         };
@@ -97,12 +85,12 @@ app.post('/submit-form', async (req, res) => {
         res.status(200).json({ 
             message: 'Form submitted successfully',
             details: {
-                emailSent: true,
-                recipient: mailOptions.to
+                demo: true,
+                emailDisabled: false
             }
         });
     } catch (error) {
-        console.error('Error processing form:', error);
+        console.error('Form submission error:', error);
         res.status(500).json({ 
             error: 'Failed to process form submission',
             details: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -113,7 +101,6 @@ app.post('/submit-form', async (req, res) => {
 // Contact form submission endpoint
 app.post('/contact', async (req, res) => {
     try {
-        console.log('Received contact form submission:', req.body);
         const { name, email, phone, message } = req.body;
         
         // Validate required fields
@@ -138,14 +125,14 @@ app.post('/contact', async (req, res) => {
             <p>${message}</p>
         `;
 
+        // Send email
         const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: process.env.SMTP_USER, // Send to the same email
+            from: 'eisner2020@mac.com',
+            to: 'eisner2020@mac.com', // Send to the same email
             subject: 'New Contact Form Submission',
             html: emailContent
         };
 
-        console.log('Attempting to send email...');
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent successfully:', info.response);
 

@@ -1,4 +1,8 @@
 node_modules/
 .env
+*.working
+backup-*/
+local/
+new-demo/
 .DS_Store
 *.log
