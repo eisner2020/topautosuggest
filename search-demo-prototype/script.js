@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchForm.addEventListener('submit', handleSearchDataForm);
     }
 
-    const contactForm = document.querySelector('.contact-form');
+    const contactForm = document.getElementById('contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', handleContactForm);
     }
@@ -373,6 +373,7 @@ async function handleContactForm(event) {
     try {
         submitButton.disabled = true;
         submitButton.textContent = 'Sending...';
+        errorDiv.style.display = 'none';
         
         const formData = {
             name: form.querySelector('#contact-name').value.trim(),
@@ -384,33 +385,20 @@ async function handleContactForm(event) {
         if (!formData.name || !formData.email || !formData.message) {
             throw new Error('Please fill in all required fields');
         }
-        
-        // Determine the correct endpoint URL based on environment
-        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8000'
-            : 'https://topautosuggest.onrender.com';
-        
-        const response = await fetch(`${baseUrl}/submit-contact`, {
+
+        // Always use localhost:8000 for now
+        const response = await fetch('http://localhost:8000/submit-contact', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         });
 
-        // Check if response is JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Server returned non-JSON response');
-        }
-        
-        const data = await response.json();
-        
         if (!response.ok) {
-            throw new Error(data.error || data.message || 'Failed to send message');
+            throw new Error('Failed to send message');
         }
-        
+
         // Clear form and show success message
         form.reset();
         errorDiv.textContent = 'Message sent successfully!';
