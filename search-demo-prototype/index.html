@@ -135,6 +135,7 @@
             cursor: pointer;
             font-size: 14px;
             color: #212121;
+            transition: all 0.2s ease;
         }
 
         .suggestion-item:hover {
@@ -144,6 +145,21 @@
         .suggestion-item.highlighted {
             background: #ffd700;
             font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item.highlighted:hover {
+            background: #ffed4a;
+            transform: translateX(5px);
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-item a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         
         .try-it-section {

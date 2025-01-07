@@ -99,10 +99,25 @@ class TopSearchDemo {
         suggestions.forEach((suggestion) => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
-            div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
+                // Create an actual anchor tag for highlighted suggestions
+                const link = document.createElement('a');
+                link.href = `https://www.google.com/search?q=${encodeURIComponent(suggestion)}`;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = suggestion;
+                link.style.textDecoration = 'none';
+                link.style.color = 'inherit';
+                link.style.display = 'block';
+                link.style.width = '100%';
+                link.style.height = '100%';
+                
                 div.classList.add('highlighted');
+                div.style.cursor = 'pointer';
+                div.appendChild(link);
+            } else {
+                div.textContent = suggestion;
             }
             
             this.suggestionsBox.appendChild(div);
