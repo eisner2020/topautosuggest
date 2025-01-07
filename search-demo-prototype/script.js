@@ -385,13 +385,25 @@ async function handleContactForm(event) {
             throw new Error('Please fill in all required fields');
         }
         
-        const response = await fetch('/submit-contact', {
+        // Determine the correct endpoint URL based on environment
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000'
+            : 'https://topautosuggest.onrender.com';
+        
+        const response = await fetch(`${baseUrl}/submit-contact`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(formData)
         });
+
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server returned non-JSON response');
+        }
         
         const data = await response.json();
         
