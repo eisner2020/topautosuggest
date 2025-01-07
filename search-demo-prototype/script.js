@@ -364,46 +364,54 @@ async function handleSearchDataForm(event) {
 // Contact form handling
 async function handleContactForm(event) {
     event.preventDefault();
-
-    const form = event.target;
-    const formData = {
-        name: form.querySelector('#contact-name').value.trim(),
-        email: form.querySelector('#contact-email').value.trim(),
-        message: form.querySelector('#contact-message').value.trim()
-    };
-
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
     
-    // Disable submit button and show loading state
-    submitButton.disabled = true;
-    submitButton.textContent = 'Sending...';
-
+    const form = event.target;
+    const errorDiv = document.getElementById('contact-error');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    
     try {
-        const response = await fetch('/contact', {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+        
+        const formData = {
+            name: form.querySelector('#contact-name').value.trim(),
+            email: form.querySelector('#contact-email').value.trim(),
+            message: form.querySelector('#contact-message').value.trim()
+        };
+
+        // Validate required fields
+        if (!formData.name || !formData.email || !formData.message) {
+            throw new Error('Please fill in all required fields');
+        }
+        
+        const response = await fetch('/submit-contact', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         });
-
+        
         const data = await response.json();
-
+        
         if (!response.ok) {
-            throw new Error(data.message || 'Failed to send message');
+            throw new Error(data.error || data.message || 'Failed to send message');
         }
-
-        // Show success message
-        alert('Message sent successfully! We will get back to you soon.');
+        
+        // Clear form and show success message
         form.reset();
-
+        errorDiv.textContent = 'Message sent successfully!';
+        errorDiv.style.color = '#28a745';
+        errorDiv.style.display = 'block';
+        
     } catch (error) {
-        console.error('Contact form error:', error);
-        alert(error.message || 'Failed to send message. Please try again.');
+        console.error('Error:', error);
+        errorDiv.textContent = error.message || 'There was an error sending your message. Please try again.';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.display = 'block';
     } finally {
-        // Re-enable submit button and restore text
         submitButton.disabled = false;
-        submitButton.textContent = originalText;
+        submitButton.textContent = originalButtonText;
     }
 }

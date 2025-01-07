@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname), {
 }));
 app.use(bodyParser.json());
 
-// Email transporter
+// Email configuration
 const transporter = nodemailer.createTransport({
     host: 'smtp.mail.me.com',
     port: 587,
@@ -28,7 +28,19 @@ const transporter = nodemailer.createTransport({
         pass: 'jguq-juhk-dzwm-arfv'
     },
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: true,
+        ciphers: 'SSLv3'
+    },
+    debug: true,
+    logger: true
+});
+
+// Test email configuration
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('Email verification failed:', error);
+    } else {
+        console.log('Server is ready to take messages');
     }
 });
 
@@ -98,58 +110,47 @@ app.post(['/submit-form', '/submit-search'], async (req, res) => {
     }
 });
 
-// Contact form submission endpoint
-app.post('/contact', async (req, res) => {
+// Contact form endpoint
+app.post('/submit-contact', async (req, res) => {
     try {
-        const { name, email, phone, message } = req.body;
+        const { name, email, message } = req.body;
         
-        // Validate required fields
         if (!name || !email || !message) {
-            console.log('Missing required fields:', { name, email, message });
-            return res.status(400).json({ 
-                error: 'Missing required fields',
-                details: {
-                    name: !name,
-                    email: !email,
-                    message: !message
-                }
-            });
+            return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        const emailContent = `
-            <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message}</p>
-        `;
-
-        // Send email
         const mailOptions = {
-            from: 'eisner2020@mac.com',
-            to: 'eisner2020@mac.com', // Send to the same email
-            subject: 'New Contact Form Submission',
-            html: emailContent
+            from: {
+                name: 'TopAutosuggest Contact Form',
+                address: 'eisner2020@mac.com'
+            },
+            to: 'eisner2020@mac.com',
+            subject: `New Contact Form Submission from ${name}`,
+            text: `
+Name: ${name}
+Email: ${email}
+Message: ${message}
+
+This message was sent from your TopAutosuggest contact form.`,
+            html: `
+<h2>New Contact Form Submission</h2>
+<p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Message:</strong></p>
+<p>${message}</p>
+<br>
+<p><em>This message was sent from your TopAutosuggest contact form.</em></p>`
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.response);
-
-        res.status(200).json({ 
-            message: 'Message sent successfully',
-            details: {
-                emailSent: true,
-                recipient: mailOptions.to,
-                messageId: info.messageId
-            }
-        });
+        console.log('Email sent successfully:', info);
+        res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
-        console.error('Error processing contact form:', error);
+        console.error('Error sending email:', error);
         res.status(500).json({ 
-            error: 'Failed to send message',
-            details: error.message,
-            code: error.code
+            message: 'Failed to send email',
+            error: error.message,
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 });
