@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -16,12 +17,12 @@ app.use(bodyParser.json());
 
 // Simple email transporter
 const transporter = nodemailer.createTransport({
-    host: 'smtp.mail.me.com',
-    port: 587,
+    host: process.env.SMTP_HOST || 'smtp.mail.me.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
     secure: false,
     auth: {
-        user: 'eisner2020@mac.com',
-        pass: 'jguq-juhk-dzwm-arfv'
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     }
 });
 
@@ -35,8 +36,8 @@ app.post('/submit-contact', async (req, res) => {
         }
 
         const mailOptions = {
-            from: 'eisner2020@mac.com',
-            to: 'eisner2020@mac.com',
+            from: process.env.SMTP_USER,
+            to: process.env.SMTP_USER,
             subject: `New Contact Form Submission from ${name}`,
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
         };
