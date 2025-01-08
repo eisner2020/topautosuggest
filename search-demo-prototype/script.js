@@ -4,13 +4,10 @@ class TopSearchDemo {
         this.suggestionsBox = document.getElementById(options.suggestionsId);
         this.demos = [];
         this.currentDemoIndex = 0;
-        this.typingSpeed = 100;
+        this.typingSpeed = 150;
         this.isTyping = false;
         this.currentSuggestions = [];
         this.targetSuggestion = null;
-        this.isContinuous = true; // Always run continuously
-        this.highlightLoop = options.highlightLoop || false;
-        this.currentTimeout = null;
     }
 
     addDemo(keyword, target) {
@@ -30,6 +27,10 @@ class TopSearchDemo {
             const demo = this.demos[this.currentDemoIndex];
             this.targetSuggestion = demo.target;
             
+            // Clear previous state
+            this.cleanup();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
             // Type and show suggestions
             await this.typeText(demo.keyword);
             
@@ -37,57 +38,20 @@ class TopSearchDemo {
             const suggestions = this.generateSuggestions(demo.keyword, this.targetSuggestion);
             this.showSuggestions(suggestions, this.targetSuggestion);
             
-            // Keep the final state visible for longer
-            await new Promise(resolve => setTimeout(resolve, 4000));
-            
-            // Clear everything
-            this.cleanup();
+            // Keep the final state visible
+            await new Promise(resolve => setTimeout(resolve, 3000));
             
             // Move to next demo
             this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
             
-            // Pause between demos
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-    }
-
-    generateSuggestions(query, targetSuggestion) {
-        if (!query || !targetSuggestion) return [];
-        
-        const suggestions = [];
-        const queryLower = query.toLowerCase();
-        
-        // Always include several suggestions from demos
-        this.demos.forEach(demo => {
-            if (demo.keyword.toLowerCase().includes(queryLower)) {
-                suggestions.push(demo.keyword);
+            // Reshuffle when we've gone through all demos
+            if (this.currentDemoIndex === 0) {
+                for (let i = this.demos.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.demos[i], this.demos[j]] = [this.demos[j], this.demos[i]];
+                }
             }
-            if (demo.target.toLowerCase().includes(queryLower)) {
-                suggestions.push(demo.target);
-            }
-        });
-        
-        // Add some common variations
-        suggestions.push(query + ' near me');
-        suggestions.push(query + ' services');
-        suggestions.push(query + ' reviews');
-        
-        // Add target suggestion if we've typed enough
-        if (query.length >= Math.floor(targetSuggestion.length * 0.4)) {
-            suggestions.push(targetSuggestion);
         }
-        
-        // Remove duplicates and current query
-        const uniqueSuggestions = [...new Set(suggestions)]
-            .filter(s => s.toLowerCase() !== queryLower);
-        
-        // Shuffle suggestions
-        for (let i = uniqueSuggestions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [uniqueSuggestions[i], uniqueSuggestions[j]] = [uniqueSuggestions[j], uniqueSuggestions[i]];
-        }
-        
-        return uniqueSuggestions.slice(0, 5);
     }
 
     showSuggestions(suggestions, targetSuggestion) {
@@ -101,86 +65,73 @@ class TopSearchDemo {
             div.className = 'suggestion-item';
             
             if (suggestion === targetSuggestion) {
-                // Create an actual anchor tag for highlighted suggestions
-                const link = document.createElement('a');
-                link.href = `https://www.google.com/search?q=${encodeURIComponent(suggestion)}`;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.textContent = suggestion;
-                link.style.textDecoration = 'none';
-                link.style.color = 'inherit';
-                link.style.display = 'block';
-                link.style.width = '100%';
-                link.style.height = '100%';
-                
                 div.classList.add('highlighted');
                 div.style.cursor = 'pointer';
-                div.appendChild(link);
-            } else {
-                div.textContent = suggestion;
+                div.onclick = function() {
+                    window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
+                };
             }
             
+            div.textContent = suggestion;
             this.suggestionsBox.appendChild(div);
         });
         
         if (suggestions.length > 0) {
             this.suggestionsBox.style.display = 'block';
-            this.suggestionsBox.classList.add('visible');
         } else {
             this.suggestionsBox.style.display = 'none';
-            this.suggestionsBox.classList.remove('visible');
         }
     }
 
-    async typeText(text) {
-        if (!this.input) return;
+    generateSuggestions(query, targetSuggestion) {
+        if (!query || !targetSuggestion) return [];
         
-        // Clear any existing timeout
-        if (this.currentTimeout) {
-            clearTimeout(this.currentTimeout);
-            this.currentTimeout = null;
+        const suggestions = [];
+        const queryLower = query.toLowerCase();
+        
+        // Add target suggestion if we've typed enough
+        if (query.length >= Math.floor(targetSuggestion.length * 0.4)) {
+            suggestions.push(targetSuggestion);
         }
         
-        // Reset input and suggestions
-        this.cleanup();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Add some variations
+        suggestions.push(query + ' near me');
+        suggestions.push('best ' + query);
+        suggestions.push(query + ' services');
         
-        // Type each character with proper timing
+        // Remove duplicates and current query
+        return [...new Set(suggestions)]
+            .filter(s => s.toLowerCase() !== queryLower)
+            .slice(0, 5);
+    }
+
+    async typeText(text) {
+        this.isTyping = true;
         let currentText = '';
+        
         for (let i = 0; i < text.length; i++) {
-            await new Promise(resolve => {
-                this.currentTimeout = setTimeout(() => {
-                    currentText = text.substring(0, i + 1);
-                    this.input.value = currentText;
-                    
-                    if (i > 1) {
-                        const suggestions = this.generateSuggestions(currentText, this.targetSuggestion);
-                        this.showSuggestions(suggestions, null);
-                    }
-                    
-                    resolve();
-                }, this.typingSpeed);
-            });
+            if (!this.isTyping) break;
+            
+            currentText = text.substring(0, i + 1);
+            this.input.value = currentText;
+            
+            if (i > 1) {
+                const suggestions = this.generateSuggestions(currentText, this.targetSuggestion);
+                this.showSuggestions(suggestions, null);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, this.typingSpeed));
         }
     }
 
     cleanup() {
-        // Clear timeout
-        if (this.currentTimeout) {
-            clearTimeout(this.currentTimeout);
-            this.currentTimeout = null;
-        }
-        
-        // Clear input
+        this.isTyping = false;
         if (this.input) {
             this.input.value = '';
         }
-        
-        // Clear suggestions
         if (this.suggestionsBox) {
             this.suggestionsBox.innerHTML = '';
             this.suggestionsBox.style.display = 'none';
-            this.suggestionsBox.classList.remove('visible');
         }
     }
 }
@@ -248,23 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     mainDemo.start();
 
-    // Initialize bottom demo
-    window.bottomDemo = new BottomSearchDemo({
-        inputId: 'bottom-search-input',
-        suggestionsId: 'bottom-suggestions'
-    });
-    
-    // Keep just one demo for the bottom search to make it clearer
-    bottomDemo.addDemo("divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates");
-    
-    bottomDemo.start();
-
-    // Initialize form handlers
-    const searchForm = document.getElementById('search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', handleSearchDataForm);
+    // Handle search data form submission
+    const searchDataForm = document.getElementById('search-data-form');
+    if (searchDataForm) {
+        searchDataForm.addEventListener('submit', handleSearchDataForm);
     }
 
+    // Handle contact form submission
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', handleContactForm);
@@ -274,79 +215,61 @@ document.addEventListener('DOMContentLoaded', () => {
 // Form handling for search data
 async function handleSearchDataForm(event) {
     event.preventDefault();
-
-    const form = event.target;
-    const targetKeywords = form.querySelector('#target-keywords')?.value?.trim();
-    const city = form.querySelector('#city')?.value?.trim();
-    const companyName = form.querySelector('#company-name')?.value?.trim();
     
-    const errorElement = document.getElementById('form-error');
+    const form = event.target;
+    const errorElement = document.getElementById('search-data-error');
     const submitButton = form.querySelector('button[type="submit"]');
-
-    // Clear previous error
-    if (errorElement) {
-        errorElement.style.display = 'none';
-        errorElement.textContent = '';
-    }
-
-    // Validate required fields
-    if (!targetKeywords || !city || !companyName) {
-        if (errorElement) {
-            errorElement.style.display = 'block';
-            errorElement.textContent = 'Please fill in all required fields.';
-        }
-        return;
-    }
-
-    // Disable submit button and show loading state
     const originalText = submitButton.textContent;
-    submitButton.disabled = true;
-    submitButton.textContent = 'Processing...';
-
+    
     try {
-        // Show results
-        const resultsDiv = document.getElementById('results');
-        if (resultsDiv) {
-            resultsDiv.scrollIntoView({ behavior: 'smooth' });
-            
-            const searchContainer = document.createElement('div');
-            searchContainer.innerHTML = `
-                <div class="results-container">
-                    <h3>Search Data for "${targetKeywords} ${city}"</h3>
-                    <div class="data-point">
-                        <strong>Monthly Searches:</strong> ${Math.floor(Math.random() * 10000).toLocaleString()}
-                    </div>
-                    <div class="search-demo-container">
-                        <div class="google-logo">
-                            <span style="color:#4285f4">G</span><span style="color:#ea4335">o</span><span style="color:#fbbc05">o</span><span style="color:#4285f4">g</span><span style="color:#34a853">l</span><span style="color:#ea4335">e</span>
-                        </div>
-                        <div class="search-wrapper">
-                            <input type="text" id="custom-search-input" placeholder="Search...">
-                            <div id="custom-suggestions" class="suggestions-box"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            resultsDiv.innerHTML = '';
-            resultsDiv.appendChild(searchContainer);
-
-            // Initialize a new search demo for the custom search
-            const customDemo = new TopSearchDemo({
-                inputId: 'custom-search-input',
-                suggestionsId: 'custom-suggestions',
-                highlightLoop: true,
-                typingSpeed: 100  
-            });
-
-            // Set up the demo with the search query and target
-            const searchQuery = `${targetKeywords} ${city}`;
-            const targetSuggestion = `${targetKeywords} ${city} ${companyName}`;
-            customDemo.addDemo(searchQuery, targetSuggestion);
-            
-            customDemo.start();
+        // Disable submit button and show loading state
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+        
+        // Hide any previous error messages
+        if (errorElement) {
+            errorElement.style.display = 'none';
         }
-
+        
+        // Get form data
+        const formData = {
+            businessName: form.querySelector('#business-name').value.trim(),
+            businessType: form.querySelector('#business-type').value.trim(),
+            location: form.querySelector('#location').value.trim(),
+            email: form.querySelector('#email').value.trim()
+        };
+        
+        // Validate required fields
+        for (const [key, value] of Object.entries(formData)) {
+            if (!value) {
+                throw new Error(`Please fill in ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+            }
+        }
+        
+        // Submit form data
+        const response = await fetch('/api/submit-search-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to submit form');
+        }
+        
+        // Show success message
+        if (errorElement) {
+            errorElement.style.color = '#28a745';
+            errorElement.textContent = 'Form submitted successfully!';
+            errorElement.style.display = 'block';
+            errorElement.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Clear form
+        form.reset();
+        
     } catch (error) {
         console.error('Form submission error:', error);
         if (errorElement) {
@@ -386,8 +309,9 @@ async function handleContactForm(event) {
             throw new Error('Please fill in all required fields');
         }
 
-        // Always use localhost:8000 for now
-        const response = await fetch('http://localhost:8000/submit-contact', {
+        // Use the current domain instead of hardcoded localhost
+        const serverUrl = window.location.origin;
+        const response = await fetch(`${serverUrl}/submit-contact`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
