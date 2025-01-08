@@ -8,13 +8,12 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 8000;
 
-// Basic CORS setup
+// Middleware
 app.use(cors());
-
-// Basic middleware
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname)));
 
-// Simple email transporter
+// Configure email transporter
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: 587,
@@ -31,22 +30,28 @@ const transporter = nodemailer.createTransport({
     logger: true
 });
 
-// Add error logging
-transporter.verify(function(error, success) {
+// Verify email configuration
+transporter.verify((error, success) => {
     if (error) {
-        console.log('Server error:', error);
+        console.error('Email configuration error:', error);
     } else {
-        console.log('Server is ready to take messages');
+        console.log('Server is ready to send emails');
     }
 });
 
-// Simple contact endpoint
-app.post('/api/submit-contact', async (req, res) => {
+// Contact form endpoint
+app.post('/submit-contact', async (req, res) => {
+    console.log('Received contact form submission:', req.body);
+    
     try {
         const { name, email, message } = req.body;
         
         if (!name || !email || !message) {
-            return res.status(400).json({ message: 'Missing required fields' });
+            console.log('Missing required fields:', { name, email, message });
+            return res.status(400).json({ 
+                success: false,
+                message: 'Missing required fields' 
+            });
         }
 
         const mailOptions = {
@@ -56,23 +61,29 @@ app.post('/api/submit-contact', async (req, res) => {
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
         };
 
-        console.log('Attempting to send email with options:', {
+        console.log('Sending email with options:', {
             ...mailOptions,
-            auth: '***hidden***'  // Hide sensitive info
+            auth: '***hidden***'
         });
 
         await transporter.sendMail(mailOptions);
-        res.json({ message: 'Email sent successfully' });
+        
+        console.log('Email sent successfully');
+        res.json({ 
+            success: true,
+            message: 'Email sent successfully' 
+        });
     } catch (error) {
-        console.error('Detailed error:', error);
-        res.status(500).json({ message: 'Failed to send email' });
+        console.error('Email sending error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Failed to send email',
+            error: error.message
+        });
     }
 });
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
-
-// Handle all other routes
+// Catch-all route
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
