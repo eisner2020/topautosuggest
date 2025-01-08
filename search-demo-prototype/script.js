@@ -309,18 +309,26 @@ async function handleContactForm(event) {
             throw new Error('Please fill in all required fields');
         }
 
-        // Use the current domain instead of hardcoded localhost
+        // Use the current domain
         const serverUrl = window.location.origin;
+        console.log('Sending to:', `${serverUrl}/submit-contact`);
+        console.log('Form data:', formData);
+
         const response = await fetch(`${serverUrl}/submit-contact`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(formData)
         });
 
+        console.log('Response status:', response.status);
+        const responseData = await response.json();
+        console.log('Response data:', responseData);
+
         if (!response.ok) {
-            throw new Error('Failed to send message');
+            throw new Error(responseData.message || 'Failed to send message');
         }
 
         // Clear form and show success message
@@ -330,7 +338,7 @@ async function handleContactForm(event) {
         errorDiv.style.display = 'block';
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Detailed error:', error);
         errorDiv.textContent = error.message || 'There was an error sending your message. Please try again.';
         errorDiv.style.color = '#dc3545';
         errorDiv.style.display = 'block';
