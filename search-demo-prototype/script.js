@@ -213,10 +213,61 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (contactForm) {
         console.log('Adding submit event listener to contact form');
-        contactForm.addEventListener('submit', (event) => {
-            console.log('Contact form submitted');
-            handleContactForm(event);
-        });
+        contactForm.onsubmit = function(event) {
+            console.log('Form submitted via onsubmit');
+            event.preventDefault();
+            
+            const formData = {
+                name: this.querySelector('#contact-name').value.trim(),
+                email: this.querySelector('#contact-email').value.trim(),
+                message: this.querySelector('#contact-message').value.trim()
+            };
+            
+            console.log('Form data:', formData);
+            
+            const errorDiv = document.getElementById('contact-error');
+            const submitButton = this.querySelector('button[type="submit"]');
+            
+            // Show sending state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            errorDiv.style.display = 'none';
+            
+            // Send the data
+            fetch('/submit-contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    this.reset();
+                    errorDiv.textContent = 'Message sent successfully!';
+                    errorDiv.style.color = '#28a745';
+                } else {
+                    throw new Error(data.message || 'Failed to send message');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorDiv.textContent = error.message || 'Failed to send message';
+                errorDiv.style.color = '#dc3545';
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+                errorDiv.style.display = 'block';
+            });
+            
+            return false;
+        };
     } else {
         console.error('Contact form not found in DOM');
     }
@@ -291,74 +342,5 @@ async function handleSearchDataForm(event) {
         // Re-enable submit button and restore text
         submitButton.disabled = false;
         submitButton.textContent = originalText;
-    }
-}
-
-// Contact form handling
-async function handleContactForm(event) {
-    console.log('handleContactForm called');
-    event.preventDefault();
-    
-    const form = event.target;
-    const errorDiv = document.getElementById('contact-error');
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.textContent;
-    
-    try {
-        submitButton.disabled = true;
-        submitButton.textContent = 'Sending...';
-        errorDiv.style.display = 'none';
-        
-        const formData = {
-            name: form.querySelector('#contact-name').value.trim(),
-            email: form.querySelector('#contact-email').value.trim(),
-            message: form.querySelector('#contact-message').value.trim()
-        };
-
-        console.log('Form data collected:', formData);
-
-        // Validate required fields
-        if (!formData.name || !formData.email || !formData.message) {
-            throw new Error('Please fill in all required fields');
-        }
-
-        // Use the current domain
-        const serverUrl = window.location.origin;
-        console.log('Server URL:', serverUrl);
-        console.log('Sending to:', `${serverUrl}/submit-contact`);
-        console.log('Form data:', formData);
-
-        const response = await fetch(`${serverUrl}/submit-contact`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        console.log('Response received');
-        console.log('Response status:', response.status);
-        const responseData = await response.json();
-        console.log('Response data:', responseData);
-
-        if (!response.ok || !responseData.success) {
-            throw new Error(responseData.message || 'Failed to send message');
-        }
-
-        // Clear form and show success message
-        form.reset();
-        errorDiv.textContent = 'Message sent successfully!';
-        errorDiv.style.color = '#28a745';
-        errorDiv.style.display = 'block';
-        
-    } catch (error) {
-        console.error('Detailed error:', error);
-        errorDiv.textContent = error.message || 'There was an error sending your message. Please try again.';
-        errorDiv.style.color = '#dc3545';
-        errorDiv.style.display = 'block';
-    } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = originalButtonText;
     }
 }
