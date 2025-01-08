@@ -17,12 +17,27 @@ app.use(bodyParser.json());
 
 // Simple email transporter
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.mail.me.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
+    host: process.env.SMTP_HOST,
+    port: 587,
     secure: false,
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
+    },
+    tls: {
+        rejectUnauthorized: true,
+        ciphers: 'SSLv3'
+    },
+    debug: true,
+    logger: true
+});
+
+// Add error logging
+transporter.verify(function(error, success) {
+    if (error) {
+        console.log('Server error:', error);
+    } else {
+        console.log('Server is ready to take messages');
     }
 });
 
@@ -42,13 +57,20 @@ app.post('/submit-contact', async (req, res) => {
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
         };
 
+        console.log('Attempting to send email with options:', {
+            ...mailOptions,
+            auth: '***hidden***'  // Hide sensitive info
+        });
+
         await transporter.sendMail(mailOptions);
         res.json({ message: 'Email sent successfully' });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Detailed error:', error);
         res.status(500).json({ message: 'Failed to send email' });
     }
 });
 
 // Start server
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
