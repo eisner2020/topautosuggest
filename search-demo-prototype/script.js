@@ -165,6 +165,8 @@ class BottomSearchDemo extends TopSearchDemo {
 
 // Initialize forms when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing forms...');
+    
     // Initialize search demo
     const mainDemo = new TopSearchDemo({
         inputId: 'search-input',
@@ -207,8 +209,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle contact form submission
     const contactForm = document.getElementById('contact-form');
+    console.log('Contact form element:', contactForm);
+    
     if (contactForm) {
-        contactForm.addEventListener('submit', handleContactForm);
+        console.log('Adding submit event listener to contact form');
+        contactForm.addEventListener('submit', (event) => {
+            console.log('Contact form submitted');
+            handleContactForm(event);
+        });
+    } else {
+        console.error('Contact form not found in DOM');
     }
 });
 
@@ -286,6 +296,7 @@ async function handleSearchDataForm(event) {
 
 // Contact form handling
 async function handleContactForm(event) {
+    console.log('handleContactForm called');
     event.preventDefault();
     
     const form = event.target;
@@ -304,6 +315,8 @@ async function handleContactForm(event) {
             message: form.querySelector('#contact-message').value.trim()
         };
 
+        console.log('Form data collected:', formData);
+
         // Validate required fields
         if (!formData.name || !formData.email || !formData.message) {
             throw new Error('Please fill in all required fields');
@@ -311,6 +324,7 @@ async function handleContactForm(event) {
 
         // Use the current domain
         const serverUrl = window.location.origin;
+        console.log('Server URL:', serverUrl);
         console.log('Sending to:', `${serverUrl}/submit-contact`);
         console.log('Form data:', formData);
 
@@ -323,6 +337,7 @@ async function handleContactForm(event) {
             body: JSON.stringify(formData)
         });
 
+        console.log('Response received');
         console.log('Response status:', response.status);
         const responseData = await response.json();
         console.log('Response data:', responseData);
