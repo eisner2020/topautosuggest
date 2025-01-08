@@ -311,10 +311,10 @@ async function handleContactForm(event) {
 
         // Use the current domain
         const serverUrl = window.location.origin;
-        console.log('Sending to:', `${serverUrl}/submit-contact`);
+        console.log('Sending to:', `${serverUrl}/api/submit-contact`);
         console.log('Form data:', formData);
 
-        const response = await fetch(`${serverUrl}/submit-contact`, {
+        const response = await fetch(`${serverUrl}/api/submit-contact`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -12,7 +12,6 @@ const port = process.env.PORT || 8000;
 app.use(cors());
 
 // Basic middleware
-app.use(express.static(path.join(__dirname)));
 app.use(bodyParser.json());
 
 // Simple email transporter
@@ -42,7 +41,7 @@ transporter.verify(function(error, success) {
 });
 
 // Simple contact endpoint
-app.post('/submit-contact', async (req, res) => {
+app.post('/api/submit-contact', async (req, res) => {
     try {
         const { name, email, message } = req.body;
         
@@ -68,6 +67,14 @@ app.post('/submit-contact', async (req, res) => {
         console.error('Detailed error:', error);
         res.status(500).json({ message: 'Failed to send email' });
     }
+});
+
+// Serve static files
+app.use(express.static(path.join(__dirname)));
+
+// Handle all other routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Start server
