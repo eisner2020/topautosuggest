@@ -119,12 +119,12 @@ nav a {
 }
 
 .suggestion-item.highlighted {
-    background: #ffd700;
+    background: rgba(255, 215, 0, 0.3);  
     font-weight: bold;
 }
 
 .suggestion-item.highlighted:hover {
-    background: #ffed4a;
+    background: rgba(255, 215, 0, 0.5);  
 }
 
 .suggestion-item a {
