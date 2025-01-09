@@ -93,15 +93,13 @@ nav a {
     top: 100%;
     left: 0;
     right: 0;
-    margin-top: 1px;
     background: white;
     border: 1px solid #dfe1e5;
+    border-top: none;
     border-radius: 0 0 24px 24px;
-    box-shadow: 0 4px 6px rgba(32,33,36,.28);
-    display: none;
-    max-height: 160px;
-    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(32,33,36,0.28);
     z-index: 1000;
+    display: none;
 }
 
 .suggestions-box.visible {
@@ -109,11 +107,11 @@ nav a {
 }
 
 .suggestion-item {
-    padding: 8px 16px;
+    padding: 12px 16px;
     cursor: pointer;
     font-size: 14px;
     color: #212121;
-    transition: all 0.3s ease;
+    user-select: none;
 }
 
 .suggestion-item:hover {
@@ -121,9 +119,20 @@ nav a {
 }
 
 .suggestion-item.highlighted {
-    background: #fef9e7;
-    font-weight: 500;
-    color: #000;
+    background: #ffd700;
+    font-weight: bold;
+}
+
+.suggestion-item.highlighted:hover {
+    background: #ffed4a;
+}
+
+.suggestion-item a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .keyword-form .search-wrapper {
@@ -152,7 +161,6 @@ nav a {
     cursor: pointer;
     font-size: 14px;
     color: #212121;
-    transition: all 0.3s ease;
 }
 
 .keyword-form .suggestion-item:hover {
@@ -332,7 +340,6 @@ nav a {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
 }
 
 .btn:hover {
@@ -348,7 +355,6 @@ nav a {
     color: #007bff;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease;
 }
 
 .learn-more:hover {
@@ -472,7 +478,6 @@ nav a {
 }
 
 .search-input:focus {
-    box-shadow: 0 1px 6px rgba(32,33,36,.28);
     border-color: rgba(223,225,229,0);
 }
 
@@ -569,7 +574,6 @@ nav a {
     font-size: 1rem;
     cursor: pointer;
     text-decoration: none;
-    transition: background-color 0.2s;
 }
 
 .cta-button:hover {
@@ -695,7 +699,6 @@ nav a {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
 }
 
 .btn:hover {
@@ -711,7 +714,6 @@ nav a {
     color: #007bff;
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease;
 }
 
 .learn-more:hover {
@@ -786,7 +788,6 @@ footer {
 .footer-section ul li a {
     color: rgba(255,255,255,0.7);
     text-decoration: none;
-    transition: color 0.2s;
 }
 
 .footer-section ul li a:hover {

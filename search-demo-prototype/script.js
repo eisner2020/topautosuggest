@@ -32,11 +32,7 @@ class TopSearchDemo {
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             // Type and show suggestions
-            await this.typeText(demo.keyword);
-            
-            // Show final suggestions with highlight
-            const suggestions = this.generateSuggestions(demo.keyword, this.targetSuggestion);
-            this.showSuggestions(suggestions, this.targetSuggestion);
+            await this.typeAndShowSuggestions(demo.keyword, this.targetSuggestion);
             
             // Keep the final state visible
             await new Promise(resolve => setTimeout(resolve, 3000));
@@ -54,6 +50,33 @@ class TopSearchDemo {
         }
     }
 
+    async typeAndShowSuggestions(text, targetSuggestion) {
+        // Clear any existing timeout
+        if (this.resetTimeout) {
+            clearTimeout(this.resetTimeout);
+        }
+
+        // Clear suggestions first
+        this.suggestionsBox.innerHTML = '';
+        this.suggestionsBox.style.display = 'none';
+
+        // Type out the text
+        await this.typeText(text);
+        
+        // Wait a bit before showing suggestions
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Show suggestions
+        const suggestions = this.generateSuggestions(text, targetSuggestion);
+        this.showSuggestions(suggestions, targetSuggestion);
+        
+        // Set timeout to reset (6 seconds total)
+        this.resetTimeout = setTimeout(() => {
+            this.reset();
+            this.start();
+        }, 6000);  
+    }
+
     showSuggestions(suggestions, targetSuggestion) {
         if (!this.suggestionsBox) return;
         
@@ -63,16 +86,14 @@ class TopSearchDemo {
         suggestions.forEach((suggestion) => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
+            div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
                 div.classList.add('highlighted');
                 div.style.cursor = 'pointer';
-                div.onclick = function() {
-                    window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
-                };
+                div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
             
-            div.textContent = suggestion;
             this.suggestionsBox.appendChild(div);
         });
         
@@ -117,7 +138,7 @@ class TopSearchDemo {
             
             if (i > 1) {
                 const suggestions = this.generateSuggestions(currentText, this.targetSuggestion);
-                this.showSuggestions(suggestions, null);
+                this.showSuggestions(suggestions, this.targetSuggestion);
             }
             
             await new Promise(resolve => setTimeout(resolve, this.typingSpeed));
@@ -139,35 +160,136 @@ class TopSearchDemo {
 class BottomSearchDemo extends TopSearchDemo {
     constructor(options = {}) {
         super(options);
+        this.typingSpeed = 100;
+        this.currentDemoIndex = 0;
+        this.demos = [];
+    }
+
+    addDemo(keyword, target) {
+        this.demos.push({ keyword, target });
     }
 
     async start() {
         if (!this.demos.length) return;
         
-        // Shuffle the demos array
-        for (let i = this.demos.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [this.demos[i], this.demos[j]] = [this.demos[j], this.demos[i]];
-        }
-        
         while (true) {
             const demo = this.demos[this.currentDemoIndex];
-            this.targetSuggestion = demo.target;
+            
+            // Clear previous state
+            this.reset();
+            
+            // Wait before starting
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Type the text first
             await this.typeText(demo.keyword);
             
-            this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
+            // Wait a bit before showing suggestions
+            await new Promise(resolve => setTimeout(resolve, 300));
             
-            // Pause before next demo
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Show suggestions with highlight
+            if (this.suggestionsBox) {
+                const suggestions = this.generateSuggestions(demo.keyword, demo.target);
+                this.showSuggestions(suggestions, demo.target);
+                this.suggestionsBox.style.display = 'block';
+            }
+            
+            // Keep suggestions visible for a bit
+            await new Promise(resolve => setTimeout(resolve, 6000));
+            
+            // Move to next demo
+            this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
         }
+    }
+
+    reset() {
+        if (this.input) {
+            this.input.value = '';
+        }
+        if (this.suggestionsBox) {
+            this.suggestionsBox.innerHTML = '';
+            this.suggestionsBox.style.display = 'none';
+        }
+    }
+
+    generateSuggestions(query, targetSuggestion) {
+        const suggestions = [];
+        
+        // Add organic variations based on the type of business
+        if (query.includes('lawyer') || query.includes('attorney')) {
+            suggestions.push(
+                `${query} reviews`,
+                `${query} free consultation`,
+                targetSuggestion,
+                `affordable ${query}`,
+                `experienced ${query}`
+            );
+        } else if (query.includes('dentist') || query.includes('dental')) {
+            suggestions.push(
+                `${query} accepting new patients`,
+                `${query} insurance`,
+                targetSuggestion,
+                `emergency ${query}`,
+                `family ${query}`
+            );
+        } else if (query.includes('plumber') || query.includes('plumbing')) {
+            suggestions.push(
+                `${query} 24 hour`,
+                `emergency ${query}`,
+                targetSuggestion,
+                `${query} reviews`,
+                `licensed ${query}`
+            );
+        } else if (query.includes('restaurant') || query.includes('cafe')) {
+            suggestions.push(
+                `${query} menu`,
+                `${query} hours`,
+                targetSuggestion,
+                `${query} delivery`,
+                `${query} reservations`
+            );
+        } else {
+            // Default variations for other businesses
+            suggestions.push(
+                `${query} reviews`,
+                `${query} near me`,
+                targetSuggestion,
+                `best ${query}`,
+                `top rated ${query}`
+            );
+        }
+        
+        return suggestions;
+    }
+
+    showSuggestions(suggestions, targetSuggestion) {
+        if (!this.suggestionsBox) return;
+        
+        this.suggestionsBox.innerHTML = '';
+        
+        suggestions.forEach((suggestion) => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.textContent = suggestion;
+            
+            if (suggestion === targetSuggestion) {
+                div.classList.add('highlighted');
+                div.style.cursor = 'pointer';
+                div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
+            }
+            
+            this.suggestionsBox.appendChild(div);
+        });
+        
+        this.suggestionsBox.style.display = 'block';
     }
 }
 
 // Initialize forms when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing forms...');
     
-    // Initialize search demo
+    // Initialize main search demo
     const mainDemo = new TopSearchDemo({
         inputId: 'search-input',
         suggestionsId: 'suggestions',
@@ -175,103 +297,178 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightLoop: true
     });
 
-    // Add the real demo keywords
-    mainDemo.addDemo("chimney sweep pottstown pa", "chimney sweep pottstown pa wells & sons");
-    mainDemo.addDemo("commercial solar orange county", "commercial solar orange county rep solar");
-    mainDemo.addDemo("dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics");
-    mainDemo.addDemo("rehab loveland co", "rehab loveland co new life recovery");
-    mainDemo.addDemo("divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates");
-    mainDemo.addDemo("car accident lawyer miami fl", "car accident lawyer miami fl 1-800 ask gary");
-    mainDemo.addDemo("fence companies in albuquerque", "fence companies in albuquerque amazing gates");
-    mainDemo.addDemo("car accident lawyer columbia sc", "car accident lawyer columbia sc s chris davis");
-    mainDemo.addDemo("air duct cleaning dallas", "air duct cleaning dallas airductcleanup.com");
-    mainDemo.addDemo("divorce attorney charlotte", "divorce attorney charlotte n stallard & bellof plic");
-    
-    // Add new keywords
-    mainDemo.addDemo("janitorial services dallas", "janitorial services dallas delta janitorial");
-    mainDemo.addDemo("seo toronto", "seo toronto dit web solutions");
-    mainDemo.addDemo("botox denver", "botox denver adrienne stewart md");
-    mainDemo.addDemo("coolsculpting denver", "coolsculpting denver adrienne stewart md");
-    mainDemo.addDemo("laser hair removal denver", "laser hair removal denver adrienne stewart md");
-    mainDemo.addDemo("lip injections denver", "lip injections denver adrienne stewart md");
-    mainDemo.addDemo("best plastic surgeon california", "best plastic surgeon california dr simon ourian");
-    mainDemo.addDemo("colorado springs home loan", "colorado springs home loan fidelity mortgage solutions");
-    mainDemo.addDemo("in home care sacramento", "in home care sacramento fijian homecare angels");
-    mainDemo.addDemo("small business flight school", "small business flight school flywheel business advisors");
-    
+    // Initialize bottom search demo
+    const bottomDemo = new BottomSearchDemo({
+        inputId: 'try-it-input',
+        suggestionsId: 'try-it-suggestions',
+        continuous: true,
+        highlightLoop: true
+    });
+
+    // Add the real demo keywords to both demos
+    const demoKeywords = [
+        ["chimney sweep pottstown pa", "chimney sweep pottstown pa wells & sons"],
+        ["commercial solar orange county", "commercial solar orange county rep solar"],
+        ["dentistry for children scottsdale", "dentistry for children scottsdale palm valley pediatrics"],
+        ["rehab loveland co", "rehab loveland co new life recovery"],
+        ["divorce lawyer orlando fl", "divorce lawyer orlando fl caplan & associates"],
+        ["car accident lawyer miami fl", "car accident lawyer miami fl 1-800 ask gary"],
+        ["fence companies in albuquerque", "fence companies in albuquerque amazing gates"],
+        ["car accident lawyer columbia sc", "car accident lawyer columbia sc s chris davis"],
+        ["air duct cleaning dallas", "air duct cleaning dallas airductcleanup.com"],
+        ["divorce attorney charlotte", "divorce attorney charlotte n stallard & bellof plic"],
+        ["janitorial services dallas", "janitorial services dallas delta janitorial"],
+        ["seo toronto", "seo toronto dit web solutions"],
+        ["botox denver", "botox denver adrienne stewart md"],
+        ["coolsculpting denver", "coolsculpting denver adrienne stewart md"],
+        ["laser hair removal denver", "laser hair removal denver adrienne stewart md"],
+        ["lip injections denver", "lip injections denver adrienne stewart md"],
+        ["best plastic surgeon california", "best plastic surgeon california dr simon ourian"],
+        ["colorado springs home loan", "colorado springs home loan fidelity mortgage solutions"],
+        ["in home care sacramento", "in home care sacramento fijian homecare angels"],
+        ["small business flight school", "small business flight school flywheel business advisors"]
+    ];
+
+    // Add keywords to both demos
+    demoKeywords.forEach(([keyword, target]) => {
+        mainDemo.addDemo(keyword, target);
+        bottomDemo.addDemo(keyword, target);
+    });
+
+    // Start both demos
     mainDemo.start();
+    bottomDemo.start();
 
-    // Handle search data form submission
-    const searchDataForm = document.getElementById('search-data-form');
-    if (searchDataForm) {
-        searchDataForm.addEventListener('submit', handleSearchDataForm);
-    }
-
-    // Handle contact form submission
-    const contactForm = document.getElementById('contact-form');
-    console.log('Contact form element:', contactForm);
-    
-    if (contactForm) {
-        console.log('Adding submit event listener to contact form');
-        contactForm.onsubmit = function(event) {
-            console.log('Form submitted via onsubmit');
+    // Initialize search form
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(event) {
             event.preventDefault();
             
-            const formData = {
-                name: this.querySelector('#contact-name').value.trim(),
-                email: this.querySelector('#contact-email').value.trim(),
-                message: this.querySelector('#contact-message').value.trim()
-            };
+            const keywords = document.getElementById('target-keywords').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const companyName = document.getElementById('company-name').value.trim();
             
-            console.log('Form data:', formData);
-            
-            const errorDiv = document.getElementById('contact-error');
-            const submitButton = this.querySelector('button[type="submit"]');
-            
-            // Show sending state
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
-            errorDiv.style.display = 'none';
-            
-            // Send the data
-            fetch('/submit-contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response data:', data);
-                if (data.success) {
-                    this.reset();
-                    errorDiv.textContent = 'Message sent successfully!';
-                    errorDiv.style.color = '#28a745';
-                } else {
-                    throw new Error(data.message || 'Failed to send message');
+            if (!keywords || !city || !companyName) {
+                const errorDiv = document.getElementById('form-error');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Please fill in all fields';
+                    errorDiv.style.display = 'block';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorDiv.textContent = error.message || 'Failed to send message';
-                errorDiv.style.color = '#dc3545';
-            })
-            .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Send Message';
-                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Create the demo search box
+            const resultsDiv = document.getElementById('results');
+            if (!resultsDiv) return;
+
+            resultsDiv.innerHTML = `
+                <div class="search-demo-container" style="margin: 2rem auto; width: 500px;">
+                    <div class="google-logo">
+                        <span style="color:#4285f4">G</span><span style="color:#ea4335">o</span><span style="color:#fbbc05">o</span><span style="color:#4285f4">g</span><span style="color:#34a853">l</span><span style="color:#ea4335">e</span>
+                    </div>
+                    <div class="search-wrapper">
+                        <input type="text" id="try-it-input" placeholder="Search..." style="width: 100%; height: 40px; padding: 0 16px; font-size: 16px; border: 1px solid #dfe1e5; border-radius: 24px; outline: none;">
+                        <div id="try-it-suggestions" class="suggestions-box"></div>
+                    </div>
+                </div>
+            `;
+
+            // Create a new demo instance with custom suggestions
+            const demo = new BottomSearchDemo({
+                inputId: 'try-it-input',
+                suggestionsId: 'try-it-suggestions'
             });
+
+            const searchTerm = `${keywords} ${city}`;
+            const targetPhrase = `${keywords} ${city} ${companyName}`;
             
-            return false;
-        };
+            // Add the demo with the exact search term and target phrase
+            demo.addDemo(searchTerm, targetPhrase);
+            demo.start();
+
+            // Scroll to show results
+            setTimeout(() => {
+                const offset = resultsDiv.offsetTop - 100; // Show a bit of the form above
+                window.scrollTo({
+                    top: offset,
+                    behavior: 'smooth'
+                });
+            }, 100);
+        });
+    }
+
+    // Initialize contact form
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.onsubmit = handleContactForm;
     } else {
         console.error('Contact form not found in DOM');
     }
+
+    // Initialize search data form
+    const searchDataForm = document.getElementById('search-data-form');
+    if (searchDataForm) {
+        searchDataForm.onsubmit = handleSearchDataForm;
+    } else {
+        console.error('Search data form not found in DOM');
+    }
 });
+
+// Handle contact form submission
+function handleContactForm(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = {
+        name: form.querySelector('#contact-name').value.trim(),
+        email: form.querySelector('#contact-email').value.trim(),
+        message: form.querySelector('#contact-message').value.trim()
+    };
+    
+    console.log('Form data:', formData);
+    
+    const errorDiv = document.getElementById('contact-error');
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Show sending state
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending...';
+    errorDiv.style.display = 'none';
+    
+    // Send the data
+    fetch('/submit-contact', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            form.reset();
+            errorDiv.textContent = 'Message sent successfully!';
+            errorDiv.style.color = '#28a745';
+        } else {
+            throw new Error(data.message || 'Failed to send message');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        errorDiv.textContent = error.message || 'Failed to send message';
+        errorDiv.style.color = '#dc3545';
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Send Message';
+        errorDiv.style.display = 'block';
+    });
+}
 
 // Form handling for search data
 async function handleSearchDataForm(event) {
