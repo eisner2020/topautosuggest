@@ -187,11 +187,7 @@ class BottomSearchDemo extends TopSearchDemo {
             // Type the text first
             await this.typeText(demo.keyword);
             
-            // Wait a bit before showing suggestions
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            // Show all suggestions at once
-            const fragment = document.createDocumentFragment();
+            // Show suggestions with a natural stagger
             const suggestions = [
                 `${demo.keyword} reviews`,
                 `${demo.keyword} near me`,
@@ -200,38 +196,35 @@ class BottomSearchDemo extends TopSearchDemo {
                 `top rated ${demo.keyword}`
             ];
 
-            // Create all elements first
-            const elements = suggestions.map(suggestion => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.textContent = suggestion;
-                if (suggestion === demo.target) {
-                    div.style.cursor = 'pointer';
-                    div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
-                }
-                return div;
-            });
-
-            // Add all elements to fragment
-            elements.forEach(el => fragment.appendChild(el));
-
-            // Clear and update suggestions box in one operation
             if (this.suggestionsBox) {
                 this.suggestionsBox.innerHTML = '';
-                this.suggestionsBox.appendChild(fragment);
                 this.suggestionsBox.style.display = 'block';
 
-                // Add highlight after a brief delay
-                setTimeout(() => {
-                    elements.forEach(div => {
-                        if (div.textContent === demo.target) {
-                            div.classList.add('highlighted');
-                        }
-                    });
-                }, 300);
+                // Add suggestions with a slight stagger
+                for (let i = 0; i < suggestions.length; i++) {
+                    const suggestion = suggestions[i];
+                    await new Promise(resolve => setTimeout(resolve, 50)); // Stagger each suggestion
+
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = suggestion;
+                    
+                    if (suggestion === demo.target) {
+                        div.style.cursor = 'pointer';
+                        div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
+                    }
+                    
+                    this.suggestionsBox.appendChild(div);
+
+                    // Add highlight class immediately for target suggestion
+                    if (suggestion === demo.target) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        div.classList.add('highlighted');
+                    }
+                }
             }
             
-            // Keep suggestions visible for a bit
+            // Keep suggestions visible
             await new Promise(resolve => setTimeout(resolve, 6000));
             
             // Move to next demo
