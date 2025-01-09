@@ -81,16 +81,14 @@ class TopSearchDemo {
         if (!this.suggestionsBox) return;
         
         this.suggestionsBox.innerHTML = '';
-        this.currentSuggestions = suggestions;
         
+        // Show all suggestions at once, including the target
         suggestions.forEach((suggestion) => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
             div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
-                // Don't add highlight class yet
-                div.setAttribute('data-highlight', 'true');
                 div.style.cursor = 'pointer';
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
@@ -102,11 +100,11 @@ class TopSearchDemo {
 
         // Add highlight class after a brief delay
         setTimeout(() => {
-            const highlightItem = this.suggestionsBox.querySelector('[data-highlight="true"]');
-            if (highlightItem) {
-                highlightItem.classList.add('highlighted');
-            }
-        }, 100);
+            const targetItems = Array.from(this.suggestionsBox.children).filter(item => 
+                item.textContent === targetSuggestion
+            );
+            targetItems.forEach(item => item.classList.add('highlighted'));
+        }, 300);
     }
 
     generateSuggestions(query, targetSuggestion) {
@@ -272,14 +270,13 @@ class BottomSearchDemo extends TopSearchDemo {
         
         this.suggestionsBox.innerHTML = '';
         
+        // Show all suggestions at once, including the target
         suggestions.forEach((suggestion) => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
             div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
-                // Don't add highlight class yet
-                div.setAttribute('data-highlight', 'true');
                 div.style.cursor = 'pointer';
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
@@ -291,11 +288,11 @@ class BottomSearchDemo extends TopSearchDemo {
 
         // Add highlight class after a brief delay
         setTimeout(() => {
-            const highlightItem = this.suggestionsBox.querySelector('[data-highlight="true"]');
-            if (highlightItem) {
-                highlightItem.classList.add('highlighted');
-            }
-        }, 100);
+            const targetItems = Array.from(this.suggestionsBox.children).filter(item => 
+                item.textContent === targetSuggestion
+            );
+            targetItems.forEach(item => item.classList.add('highlighted'));
+        }, 300);
     }
 }
 
