@@ -190,16 +190,8 @@ class BottomSearchDemo extends TopSearchDemo {
             // Wait a bit before showing suggestions
             await new Promise(resolve => setTimeout(resolve, 300));
             
-            // Generate all suggestions including target
-            const suggestions = this.generateSuggestions(demo.keyword, demo.target);
-            
-            // Make sure target is in the suggestions
-            if (!suggestions.includes(demo.target)) {
-                suggestions.splice(2, 0, demo.target); // Insert target in the middle if not present
-            }
-            
             // Show all suggestions at once
-            this.showSuggestions(suggestions, demo.target);
+            this.showSuggestions(demo.keyword, demo.target);
             
             // Keep suggestions visible for a bit
             await new Promise(resolve => setTimeout(resolve, 6000));
@@ -209,64 +201,58 @@ class BottomSearchDemo extends TopSearchDemo {
         }
     }
 
-    generateSuggestions(query, targetSuggestion) {
-        const suggestions = [];
+    showSuggestions(query, targetSuggestion) {
+        if (!this.suggestionsBox) return;
         
-        // Add organic variations based on the type of business
+        // Clear previous suggestions
+        this.suggestionsBox.innerHTML = '';
+
+        // Generate suggestions array with target already included
+        let suggestions = [];
         if (query.includes('lawyer') || query.includes('attorney')) {
-            suggestions.push(
+            suggestions = [
                 `${query} reviews`,
                 `${query} free consultation`,
                 targetSuggestion,
                 `affordable ${query}`,
                 `experienced ${query}`
-            );
+            ];
         } else if (query.includes('dentist') || query.includes('dental')) {
-            suggestions.push(
+            suggestions = [
                 `${query} accepting new patients`,
                 `${query} insurance`,
                 targetSuggestion,
                 `emergency ${query}`,
                 `family ${query}`
-            );
+            ];
         } else if (query.includes('plumber') || query.includes('plumbing')) {
-            suggestions.push(
+            suggestions = [
                 `${query} 24 hour`,
                 `emergency ${query}`,
                 targetSuggestion,
                 `${query} reviews`,
                 `licensed ${query}`
-            );
+            ];
         } else if (query.includes('restaurant') || query.includes('cafe')) {
-            suggestions.push(
+            suggestions = [
                 `${query} menu`,
                 `${query} hours`,
                 targetSuggestion,
                 `${query} delivery`,
                 `${query} reservations`
-            );
+            ];
         } else {
-            // Default variations for other businesses
-            suggestions.push(
+            suggestions = [
                 `${query} reviews`,
                 `${query} near me`,
                 targetSuggestion,
                 `best ${query}`,
                 `top rated ${query}`
-            );
+            ];
         }
         
-        return suggestions;
-    }
-
-    showSuggestions(suggestions, targetSuggestion) {
-        if (!this.suggestionsBox) return;
-        
-        // Clear previous suggestions
-        this.suggestionsBox.innerHTML = '';
-        
-        // Create all suggestion elements first
-        const suggestionElements = suggestions.map(suggestion => {
+        // Create and append all elements at once
+        suggestions.forEach(suggestion => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
             div.textContent = suggestion;
@@ -276,22 +262,20 @@ class BottomSearchDemo extends TopSearchDemo {
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
             
-            return div;
+            this.suggestionsBox.appendChild(div);
         });
         
-        // Add all elements to DOM at once
-        suggestionElements.forEach(div => this.suggestionsBox.appendChild(div));
-        
-        // Show the suggestions box
+        // Show suggestions box
         this.suggestionsBox.style.display = 'block';
         
         // Add highlight class after a brief delay
         setTimeout(() => {
-            suggestionElements.forEach(div => {
-                if (div.textContent === targetSuggestion) {
-                    div.classList.add('highlighted');
-                }
-            });
+            const targetItem = Array.from(this.suggestionsBox.children).find(
+                item => item.textContent === targetSuggestion
+            );
+            if (targetItem) {
+                targetItem.classList.add('highlighted');
+            }
         }, 300);
     }
 
