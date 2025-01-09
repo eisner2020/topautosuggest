@@ -190,28 +190,22 @@ class BottomSearchDemo extends TopSearchDemo {
             // Wait a bit before showing suggestions
             await new Promise(resolve => setTimeout(resolve, 300));
             
-            // Show suggestions with highlight
-            if (this.suggestionsBox) {
-                const suggestions = this.generateSuggestions(demo.keyword, demo.target);
-                this.showSuggestions(suggestions, demo.target);
-                this.suggestionsBox.style.display = 'block';
+            // Generate all suggestions including target
+            const suggestions = this.generateSuggestions(demo.keyword, demo.target);
+            
+            // Make sure target is in the suggestions
+            if (!suggestions.includes(demo.target)) {
+                suggestions.splice(2, 0, demo.target); // Insert target in the middle if not present
             }
+            
+            // Show all suggestions at once
+            this.showSuggestions(suggestions, demo.target);
             
             // Keep suggestions visible for a bit
             await new Promise(resolve => setTimeout(resolve, 6000));
             
             // Move to next demo
             this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
-        }
-    }
-
-    reset() {
-        if (this.input) {
-            this.input.value = '';
-        }
-        if (this.suggestionsBox) {
-            this.suggestionsBox.innerHTML = '';
-            this.suggestionsBox.style.display = 'none';
         }
     }
 
@@ -268,10 +262,11 @@ class BottomSearchDemo extends TopSearchDemo {
     showSuggestions(suggestions, targetSuggestion) {
         if (!this.suggestionsBox) return;
         
+        // Clear previous suggestions
         this.suggestionsBox.innerHTML = '';
         
-        // Show all suggestions at once, including the target
-        suggestions.forEach((suggestion) => {
+        // Create all suggestion elements first
+        const suggestionElements = suggestions.map(suggestion => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
             div.textContent = suggestion;
@@ -281,18 +276,33 @@ class BottomSearchDemo extends TopSearchDemo {
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
             
-            this.suggestionsBox.appendChild(div);
+            return div;
         });
         
+        // Add all elements to DOM at once
+        suggestionElements.forEach(div => this.suggestionsBox.appendChild(div));
+        
+        // Show the suggestions box
         this.suggestionsBox.style.display = 'block';
-
+        
         // Add highlight class after a brief delay
         setTimeout(() => {
-            const targetItems = Array.from(this.suggestionsBox.children).filter(item => 
-                item.textContent === targetSuggestion
-            );
-            targetItems.forEach(item => item.classList.add('highlighted'));
+            suggestionElements.forEach(div => {
+                if (div.textContent === targetSuggestion) {
+                    div.classList.add('highlighted');
+                }
+            });
         }, 300);
+    }
+
+    reset() {
+        if (this.input) {
+            this.input.value = '';
+        }
+        if (this.suggestionsBox) {
+            this.suggestionsBox.innerHTML = '';
+            this.suggestionsBox.style.display = 'none';
+        }
     }
 }
 
