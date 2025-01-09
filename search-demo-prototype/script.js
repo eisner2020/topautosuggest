@@ -89,7 +89,8 @@ class TopSearchDemo {
             div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
-                div.classList.add('highlighted');
+                // Don't add highlight class yet
+                div.setAttribute('data-highlight', 'true');
                 div.style.cursor = 'pointer';
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
@@ -97,11 +98,15 @@ class TopSearchDemo {
             this.suggestionsBox.appendChild(div);
         });
         
-        if (suggestions.length > 0) {
-            this.suggestionsBox.style.display = 'block';
-        } else {
-            this.suggestionsBox.style.display = 'none';
-        }
+        this.suggestionsBox.style.display = 'block';
+
+        // Add highlight class after a brief delay
+        setTimeout(() => {
+            const highlightItem = this.suggestionsBox.querySelector('[data-highlight="true"]');
+            if (highlightItem) {
+                highlightItem.classList.add('highlighted');
+            }
+        }, 100);
     }
 
     generateSuggestions(query, targetSuggestion) {
@@ -273,7 +278,8 @@ class BottomSearchDemo extends TopSearchDemo {
             div.textContent = suggestion;
             
             if (suggestion === targetSuggestion) {
-                div.classList.add('highlighted');
+                // Don't add highlight class yet
+                div.setAttribute('data-highlight', 'true');
                 div.style.cursor = 'pointer';
                 div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
             }
@@ -282,6 +288,14 @@ class BottomSearchDemo extends TopSearchDemo {
         });
         
         this.suggestionsBox.style.display = 'block';
+
+        // Add highlight class after a brief delay
+        setTimeout(() => {
+            const highlightItem = this.suggestionsBox.querySelector('[data-highlight="true"]');
+            if (highlightItem) {
+                highlightItem.classList.add('highlighted');
+            }
+        }, 100);
     }
 }
 
