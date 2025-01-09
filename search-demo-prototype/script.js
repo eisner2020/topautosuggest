@@ -191,7 +191,45 @@ class BottomSearchDemo extends TopSearchDemo {
             await new Promise(resolve => setTimeout(resolve, 300));
             
             // Show all suggestions at once
-            this.showSuggestions(demo.keyword, demo.target);
+            const fragment = document.createDocumentFragment();
+            const suggestions = [
+                `${demo.keyword} reviews`,
+                `${demo.keyword} near me`,
+                demo.target,
+                `best ${demo.keyword}`,
+                `top rated ${demo.keyword}`
+            ];
+
+            // Create all elements first
+            const elements = suggestions.map(suggestion => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = suggestion;
+                if (suggestion === demo.target) {
+                    div.style.cursor = 'pointer';
+                    div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
+                }
+                return div;
+            });
+
+            // Add all elements to fragment
+            elements.forEach(el => fragment.appendChild(el));
+
+            // Clear and update suggestions box in one operation
+            if (this.suggestionsBox) {
+                this.suggestionsBox.innerHTML = '';
+                this.suggestionsBox.appendChild(fragment);
+                this.suggestionsBox.style.display = 'block';
+
+                // Add highlight after a brief delay
+                setTimeout(() => {
+                    elements.forEach(div => {
+                        if (div.textContent === demo.target) {
+                            div.classList.add('highlighted');
+                        }
+                    });
+                }, 300);
+            }
             
             // Keep suggestions visible for a bit
             await new Promise(resolve => setTimeout(resolve, 6000));
@@ -199,84 +237,6 @@ class BottomSearchDemo extends TopSearchDemo {
             // Move to next demo
             this.currentDemoIndex = (this.currentDemoIndex + 1) % this.demos.length;
         }
-    }
-
-    showSuggestions(query, targetSuggestion) {
-        if (!this.suggestionsBox) return;
-        
-        // Clear previous suggestions
-        this.suggestionsBox.innerHTML = '';
-
-        // Generate suggestions array with target already included
-        let suggestions = [];
-        if (query.includes('lawyer') || query.includes('attorney')) {
-            suggestions = [
-                `${query} reviews`,
-                `${query} free consultation`,
-                targetSuggestion,
-                `affordable ${query}`,
-                `experienced ${query}`
-            ];
-        } else if (query.includes('dentist') || query.includes('dental')) {
-            suggestions = [
-                `${query} accepting new patients`,
-                `${query} insurance`,
-                targetSuggestion,
-                `emergency ${query}`,
-                `family ${query}`
-            ];
-        } else if (query.includes('plumber') || query.includes('plumbing')) {
-            suggestions = [
-                `${query} 24 hour`,
-                `emergency ${query}`,
-                targetSuggestion,
-                `${query} reviews`,
-                `licensed ${query}`
-            ];
-        } else if (query.includes('restaurant') || query.includes('cafe')) {
-            suggestions = [
-                `${query} menu`,
-                `${query} hours`,
-                targetSuggestion,
-                `${query} delivery`,
-                `${query} reservations`
-            ];
-        } else {
-            suggestions = [
-                `${query} reviews`,
-                `${query} near me`,
-                targetSuggestion,
-                `best ${query}`,
-                `top rated ${query}`
-            ];
-        }
-        
-        // Create and append all elements at once
-        suggestions.forEach(suggestion => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item';
-            div.textContent = suggestion;
-            
-            if (suggestion === targetSuggestion) {
-                div.style.cursor = 'pointer';
-                div.onclick = () => window.open(`https://www.google.com/search?q=${encodeURIComponent(suggestion)}`, '_blank');
-            }
-            
-            this.suggestionsBox.appendChild(div);
-        });
-        
-        // Show suggestions box
-        this.suggestionsBox.style.display = 'block';
-        
-        // Add highlight class after a brief delay
-        setTimeout(() => {
-            const targetItem = Array.from(this.suggestionsBox.children).find(
-                item => item.textContent === targetSuggestion
-            );
-            if (targetItem) {
-                targetItem.classList.add('highlighted');
-            }
-        }, 300);
     }
 
     reset() {
