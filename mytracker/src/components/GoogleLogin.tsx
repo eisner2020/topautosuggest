@@ -11,10 +11,12 @@ export default function GoogleLogin({ onLoginSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async () => {
+  const handleSignIn = async () => {
     setLoading(true);
     setError(null);
     try {
+      // Clear any existing state first
+      googleAuth.signOut();
       const { token } = await googleAuth.signIn({ prompt: "select_account" });
       onLoginSuccess(token);
     } catch (err) {
@@ -23,6 +25,11 @@ export default function GoogleLogin({ onLoginSuccess }: Props) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSignOut = () => {
+    googleAuth.signOut();
+    window.location.reload();
   };
 
   return (
@@ -50,7 +57,7 @@ export default function GoogleLogin({ onLoginSuccess }: Props) {
         variant="contained"
         color="primary"
         startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <GoogleIcon />}
-        onClick={handleLogin}
+        onClick={handleSignIn}
         disabled={loading}
         sx={{ 
           py: 1.5,
@@ -59,7 +66,22 @@ export default function GoogleLogin({ onLoginSuccess }: Props) {
           fontSize: '1rem'
         }}
       >
-        {loading ? 'Connecting...' : 'Sign in with Google'}
+        {loading ? 'Signing in...' : 'Sign in with Google'}
+      </Button>
+
+      <Button
+        variant="contained"
+        color="error"
+        onClick={handleSignOut}
+        sx={{ 
+          py: 1.5,
+          px: 4,
+          textTransform: 'none',
+          fontSize: '1rem',
+          mt: 2
+        }}
+      >
+        Sign Out
       </Button>
 
       {error && (

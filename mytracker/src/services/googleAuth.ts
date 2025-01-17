@@ -33,9 +33,10 @@ declare global {
   }
 }
 
-class GoogleAuth {
+class GoogleAuthService {
   private scriptLoaded: boolean = false;
   private scriptLoadPromise: Promise<void> | null = null;
+  private tokenClient: any = null;
 
   private async loadGoogleScript(): Promise<void> {
     if (this.scriptLoadPromise) {
@@ -76,21 +77,34 @@ class GoogleAuth {
       }
 
       return new Promise((resolve, reject) => {
-        const client = window.google.accounts.oauth2.initTokenClient({
-          client_id: GOOGLE_CLIENT_ID,
+        const client_id = GOOGLE_CLIENT_ID;
+        if (!client_id) {
+          reject(new Error('Google Client ID not configured'));
+          return;
+        }
+
+        this.tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id,
           scope: SCOPES.join(' '),
           callback: (response: any) => {
             if (response.error) {
-              reject(new Error(response.error));
+              reject(response);
               return;
             }
             localStorage.setItem('google_access_token', response.access_token);
             resolve(response.access_token);
           },
-          prompt: options.prompt || 'select_account'
+          prompt: 'select_account consent',
+          enable_serial_consent: true
         });
 
-        client.requestAccessToken();
+        // Force new auth flow
+        localStorage.removeItem('google_access_token');
+        sessionStorage.clear();
+        
+        this.tokenClient.requestAccessToken({
+          prompt: 'select_account consent'
+        });
       });
     } catch (error) {
       console.error('Google OAuth error:', error);
@@ -122,6 +136,18 @@ class GoogleAuth {
   clearToken(): void {
     localStorage.removeItem('google_access_token');
   }
+
+  signOut(): void {
+    localStorage.removeItem('google_access_token');
+    sessionStorage.clear();
+    
+    // Clear any Google-specific cookies
+    document.cookie.split(';').forEach(cookie => {
+      document.cookie = cookie
+        .replace(/^ +/, '')
+        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
+  }
 }
 
-export const googleAuth = new GoogleAuth();
+export const googleAuth = new GoogleAuthService();
