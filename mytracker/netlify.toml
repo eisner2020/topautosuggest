@@ -6,6 +6,12 @@
 [build.environment]
   VITE_GOOGLE_CLIENT_ID = "218292657771-p9libtkssjmpj4fovfr733h1nq3v1ulf.apps.googleusercontent.com"
   VITE_APP_URL = "https://mykeywordtrack.com"
+  VITE_API_URL = "https://mykeywordtrack.com"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
