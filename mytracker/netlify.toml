@@ -1,0 +1,17 @@
+[build]
+  command = "npm install && npm run build"
+  publish = "dist"
+  environment = { NODE_VERSION = "18" }
+
+[build.environment]
+  VITE_GOOGLE_CLIENT_ID = "218292657771-p9libtkssjmpj4fovfr733h1nq3v1ulf.apps.googleusercontent.com"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
