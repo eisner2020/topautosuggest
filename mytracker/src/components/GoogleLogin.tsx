@@ -15,7 +15,7 @@ export default function GoogleLogin({ onLoginSuccess }: Props) {
     setLoading(true);
     setError(null);
     try {
-      const { token } = await googleAuth.signIn();
+      const { token } = await googleAuth.signIn({ prompt: "select_account" });
       onLoginSuccess(token);
     } catch (err) {
       setError('Failed to sign in with Google. Please try again.');

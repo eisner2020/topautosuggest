@@ -7,6 +7,10 @@ const SCOPES = [
   'https://www.googleapis.com/auth/analytics.readonly'
 ];
 
+interface SignInOptions {
+  prompt?: 'none' | 'consent' | 'select_account';
+}
+
 declare global {
   interface Window {
     google?: {
@@ -63,7 +67,7 @@ class GoogleAuth {
     return this.scriptLoadPromise;
   }
 
-  async signIn(): Promise<string> {
+  async signIn(options: SignInOptions = {}): Promise<string> {
     try {
       await this.loadGoogleScript();
 
@@ -83,6 +87,7 @@ class GoogleAuth {
             localStorage.setItem('google_access_token', response.access_token);
             resolve(response.access_token);
           },
+          prompt: options.prompt || 'select_account'
         });
 
         client.requestAccessToken();
